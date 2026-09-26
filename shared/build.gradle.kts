@@ -10,6 +10,7 @@ dependencies {
   commonMainApi(projects.shared.core.data)
   commonMainApi(projects.shared.core.ui)
   commonMainApi(projects.shared.core.uikit)
+  commonMainApi(projects.shared.core.component)
 
   commonMainApi(projects.shared.resources)
 
@@ -29,6 +30,7 @@ kotlin {
       export(projects.shared.core.data)
       export(projects.shared.core.ui)
       export(projects.shared.core.uikit)
+      export(projects.shared.core.component)
 
       export(projects.shared.resources)
 

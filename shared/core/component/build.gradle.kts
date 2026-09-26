@@ -1,0 +1,15 @@
+plugins {
+  id("compose-convention")
+}
+
+kotlin {
+  android {
+    namespace = "com.urent.core.component"
+  }
+}
+
+dependencies {
+  commonMainApi(projects.shared.core.data)
+  commonMainApi(projects.shared.core.domain)
+  commonMainApi(projects.shared.core.ui)
+}
