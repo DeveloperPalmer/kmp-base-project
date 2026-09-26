@@ -3,7 +3,6 @@ package com.urent.feature.app.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +23,7 @@ fun App() {
     ) {
       Text(
         text = stringResource(Res.string.app_name),
-        style = MaterialTheme.typography.headlineMedium
+        style = AppTheme.typography.title3
       )
     }
   }
