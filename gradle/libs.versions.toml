@@ -41,6 +41,7 @@ anvil-compiler = { module = "software.amazon.lastmile.kotlin.inject.anvil:compil
 ktor = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-content = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
@@ -67,6 +68,7 @@ detekt-rules-compose = { module = "ru.kode:detekt-rules-compose", version.ref = 
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-compose-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-serialization-plugin = { module = "org.jetbrains.kotlin.plugin.serialization:org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "kotlin" }
 compose-plugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
 ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 detekt-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
