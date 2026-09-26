@@ -5,6 +5,7 @@ import com.kmpbaseproject.core.component.AndroidAppComponent
 import com.kmpbaseproject.core.component.AppComponent
 import com.kmpbaseproject.core.component.AppComponentHolder
 import com.kmpbaseproject.core.component.create
+import com.kmpbaseproject.core.component.createBuildConfiguration
 
 class ApplicationDelegate :
   Application(),
@@ -20,6 +21,12 @@ class ApplicationDelegate :
     get() = _appComponent ?: error("app component no provided")
 
   private fun buildAppComponent(): AppComponent {
-    return AndroidAppComponent::class.create()
+    val buildConfiguration = createBuildConfiguration(
+      buildType = BuildConfig.BUILD_TYPE,
+      versionName = BuildConfig.VERSION_NAME,
+    )
+    return AndroidAppComponent::class.create(
+      buildConfigurationDelegate = buildConfiguration
+    )
   }
 }
