@@ -23,6 +23,11 @@ object AppTheme {
     @Composable
     @ReadOnlyComposable
     get() = LocalAppShapes.current
+
+  val shadows: AppShadows
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalAppShadows.current
 }
 
 @Composable
@@ -35,11 +40,13 @@ fun AppTheme(
   }
   val typography = remember { AppTypography() }
   val shapes = remember { AppShapes() }
+  val shadows = remember { AppShadows() }
 
   CompositionLocalProvider(
     LocalAppColors provides colors,
     LocalAppTypography provides typography,
     LocalAppShapes provides shapes,
+    LocalAppShadows provides shadows,
     LocalContentColor provides colors.text.primary,
     content = content
   )
