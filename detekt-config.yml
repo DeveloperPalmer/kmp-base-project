@@ -84,6 +84,9 @@ potential-bugs:
     active: false
 
 style:
+  AbstractClassCanBeConcreteClass:
+    # DI components must stay abstract: kotlin-inject generates their subclass
+    ignoreAnnotated: ['MergeComponent']
   AlsoCouldBeApply:
     active: true
   CascadingCallWrapping:
