@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <base-config>
+        <trust-anchors>
+            <!-- Trust user added CAs (e.g. Proxyman root certificate) to inspect HTTPS traffic.
+                 Ignoring AcceptsUserCertificates because this is NOT a release build -->
+            <certificates src="user" tools:ignore="AcceptsUserCertificates" />
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">dev-dep.tools.urent.tech</domain>
+    </domain-config>
+</network-security-config>
