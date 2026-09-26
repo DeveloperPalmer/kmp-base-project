@@ -8,4 +8,5 @@ dependencies {
   implementation(libs.kotlin.plugin)
   implementation(libs.kotlin.compose.plugin)
   implementation(libs.compose.plugin)
+  implementation(libs.detekt.plugin)
 }
