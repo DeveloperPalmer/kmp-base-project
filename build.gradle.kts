@@ -1,7 +1,8 @@
 plugins {
-  // Load convention plugins (and AGP/KGP they bring) once in the root classloader,
+  // Load convention plugins (and AGP/KGP/Compose plugins they bring) once in the root classloader,
   // so all subprojects share the same plugin classes.
   id("shared-convention") apply false
+  id("compose-convention") apply false
   alias(libs.plugins.spotless)
 }
 

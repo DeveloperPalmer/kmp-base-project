@@ -1,5 +1,6 @@
 plugins {
   id("com.android.application")
+  id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -30,9 +31,15 @@ android {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
   }
+
+  buildFeatures.compose = true
 }
 
 dependencies {
+  implementation(projects.shared.feature.app.ui)
+
+  implementation(libs.androidx.activity.compose)
+
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)

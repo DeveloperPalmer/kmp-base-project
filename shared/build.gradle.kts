@@ -8,6 +8,12 @@ plugins {
 dependencies {
   commonMainApi(projects.shared.core.domain)
   commonMainApi(projects.shared.core.data)
+  commonMainApi(projects.shared.core.ui)
+  commonMainApi(projects.shared.core.uikit)
+
+  commonMainApi(projects.shared.resources)
+
+  commonMainApi(projects.shared.feature.app.ui)
 }
 
 kotlin {
@@ -21,6 +27,12 @@ kotlin {
 
       export(projects.shared.core.domain)
       export(projects.shared.core.data)
+      export(projects.shared.core.ui)
+      export(projects.shared.core.uikit)
+
+      export(projects.shared.resources)
+
+      export(projects.shared.feature.app.ui)
     }
   }
 }

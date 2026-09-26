@@ -32,6 +32,10 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(
   ":android:app",
   ":shared",
+  ":shared:resources",
   ":shared:core:domain",
   ":shared:core:data",
+  ":shared:core:ui",
+  ":shared:core:uikit",
+  ":shared:feature:app:ui",
 )
