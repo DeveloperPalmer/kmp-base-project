@@ -1,15 +1,13 @@
 package com.urent.core.data.di
 
+import com.urent.core.data.network.HttpClientProvider
 import com.urent.core.data.network.PlatformErrorConverter
 import com.urent.core.data.network.installErrorResponseHandling
 import com.urent.core.domain.configuration.BuildConfiguration
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
@@ -22,13 +20,11 @@ interface CoreDataModule {
   @Provides
   @SingleIn(AppScope::class)
   fun provideHttpClient(
-    engine: HttpClientEngine,
-    logger: Logger,
-    platformErrorConverter: PlatformErrorConverter,
-    buildConfiguration: BuildConfiguration,
+    provider: HttpClientProvider,
+    platformErrorConverter: PlatformErrorConverter
   ): HttpClient {
     val json = Json { ignoreUnknownKeys = true }
-    return HttpClient(engine) {
+    return provider.create {
       install(ContentNegotiation) {
         json(json)
       }
@@ -36,10 +32,6 @@ interface CoreDataModule {
         connectTimeoutMillis = HTTP_TIMEOUT_MILLIS
         requestTimeoutMillis = HTTP_TIMEOUT_MILLIS
         socketTimeoutMillis = HTTP_TIMEOUT_MILLIS
-      }
-      install(Logging) {
-        this.logger = logger
-        level = buildConfiguration.httpLogLevel
       }
       installErrorResponseHandling(
         json = json,
@@ -49,7 +41,7 @@ interface CoreDataModule {
   }
 }
 
-private val BuildConfiguration.httpLogLevel: LogLevel
+internal val BuildConfiguration.httpLogLevel: LogLevel
   get() = when (this) {
     is BuildConfiguration.Dev,
     is BuildConfiguration.Internal -> LogLevel.ALL
