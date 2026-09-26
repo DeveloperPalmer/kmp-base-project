@@ -1,5 +1,6 @@
 plugins {
   id("shared-convention")
+  kotlin("plugin.serialization")
 }
 
 kotlin {
@@ -21,6 +22,7 @@ dependencies {
   commonMainApi(projects.shared.core.domain)
 
   commonMainApi(libs.ktor)
+  commonMainApi(libs.ktor.logging)
   commonMainImplementation(libs.ktor.content)
   commonMainImplementation(libs.ktor.json)
 }
