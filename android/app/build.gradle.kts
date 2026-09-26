@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+  implementation(projects.shared.core.component)
   implementation(projects.shared.feature.app.ui)
 
   implementation(libs.androidx.activity.compose)
