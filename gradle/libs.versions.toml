@@ -7,6 +7,9 @@ ksp = "2.3.12" # KSP version decoupled from Kotlin compiler version since 2.3.0.
 kotlin-inject = "0.9.0"
 anvil = "0.1.7"
 
+# Network
+ktor = "3.6.0"
+
 # UI
 compose-multiplatform = "1.12.1"
 compose-material3 = "1.9.0" # Material3 is versioned separately from Compose Multiplatform
@@ -33,6 +36,13 @@ kotlin-inject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ks
 anvil-runtime = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime", version.ref = "anvil" }
 anvil-runtime-optional = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime-optional", version.ref = "anvil" }
 anvil-compiler = { module = "software.amazon.lastmile.kotlin.inject.anvil:compiler", version.ref = "anvil" }
+
+# Network
+ktor = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-content = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
 # UI
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
