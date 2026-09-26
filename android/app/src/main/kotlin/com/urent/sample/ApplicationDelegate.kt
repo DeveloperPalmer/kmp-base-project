@@ -5,6 +5,7 @@ import com.urent.core.component.AndroidAppComponent
 import com.urent.core.component.AppComponent
 import com.urent.core.component.AppComponentHolder
 import com.urent.core.component.create
+import com.urent.core.component.createBuildConfiguration
 
 class ApplicationDelegate :
   Application(),
@@ -20,6 +21,12 @@ class ApplicationDelegate :
     get() = _appComponent ?: error("app component no provided")
 
   private fun buildAppComponent(): AppComponent {
-    return AndroidAppComponent::class.create()
+    val buildConfiguration = createBuildConfiguration(
+      buildType = BuildConfig.BUILD_TYPE,
+      versionName = BuildConfig.VERSION_NAME,
+    )
+    return AndroidAppComponent::class.create(
+      buildConfigurationDelegate = buildConfiguration
+    )
   }
 }
