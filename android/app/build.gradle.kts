@@ -26,6 +26,11 @@ android {
         enable = false
       }
     }
+    create("internal") {
+      initWith(getByName("release"))
+      applicationIdSuffix = ".internal"
+      signingConfig = signingConfigs.getByName("debug")
+    }
   }
 
   compileOptions {
@@ -33,7 +38,10 @@ android {
     targetCompatibility = JavaVersion.VERSION_17
   }
 
-  buildFeatures.compose = true
+  buildFeatures {
+    compose = true
+    buildConfig = true
+  }
 }
 
 dependencies {
