@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.UrentSample" parent="android:Theme.Material.NoActionBar" />
+</resources>

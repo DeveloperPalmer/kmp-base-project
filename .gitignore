@@ -1,0 +1,28 @@
+.DS_Store
+*.iml
+*.hprof
+.gradle/
+.kotlin/
+build/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# IDE
+/.idea/*
+!/.idea/codeStyles/
+!/.idea/dictionaries/
+!/.idea/inspectionProfiles/
+!/.idea/codeInsightSettings.xml
+!/.idea/kotlinCodeInsightSettings.xml
+!/.idea/encodings.xml
+
+# iOS
+xcuserdata/
+*.xcuserstate
+DerivedData/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
