@@ -23,3 +23,23 @@ spotless {
     endWithNewline()
   }
 }
+
+val detektTaskNames = setOf(
+  // android app
+  "detektDebug",
+  // KMP modules: commonMain + androidMain with type resolution, iosMain without it
+  "detektMainAndroid",
+  "detektIosMainSourceSet",
+)
+
+subprojects {
+  tasks.matching { it.name in detektTaskNames }.configureEach {
+    mustRunAfter(rootProject.tasks.named("spotlessApply"))
+  }
+}
+
+tasks.register("prePushCheck") {
+  group = "verification"
+  dependsOn("spotlessApply")
+  dependsOn(subprojects.map { project -> project.tasks.matching { it.name in detektTaskNames } })
+}

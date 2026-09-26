@@ -4,6 +4,7 @@ plugins {
   kotlin("multiplatform")
   id("com.android.kotlin.multiplatform.library")
   id("com.google.devtools.ksp")
+  id("detekt-convention")
 }
 
 kotlin {
