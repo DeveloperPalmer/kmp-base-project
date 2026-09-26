@@ -37,5 +37,6 @@ include(
   ":shared:core:data",
   ":shared:core:ui",
   ":shared:core:uikit",
+  ":shared:core:component",
   ":shared:feature:app:ui",
 )

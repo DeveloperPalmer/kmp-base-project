@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+  implementation(libs.ksp.plugin)
   implementation(libs.android.gradle.plugin)
   implementation(libs.kotlin.plugin)
   implementation(libs.kotlin.compose.plugin)
