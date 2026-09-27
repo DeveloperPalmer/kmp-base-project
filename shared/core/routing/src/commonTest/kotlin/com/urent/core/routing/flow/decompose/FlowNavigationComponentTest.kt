@@ -4,11 +4,18 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.arkivanov.essenty.lifecycle.destroy
 import com.arkivanov.essenty.lifecycle.resume
+import com.urent.core.routing.di.FlowComponent
 import com.urent.core.ui.mvi.BaseViewModel
 import com.urent.core.ui.routing.Event
+import com.urent.core.ui.viewmodel.AssistedViewModelProvider
+import com.urent.core.ui.viewmodel.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -18,6 +25,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FlowNavigationComponentTest {
@@ -81,12 +89,23 @@ class FlowNavigationComponentTest {
     assertEquals(listOf(TestConfig.Root, TestConfig.Details), nested.configs())
     assertEquals(listOf(TestParentConfig.Nested), parent.configs())
   }
+
+  @Test
+  fun `cancels flow coroutine scope on destroy`() {
+    val lifecycle = LifecycleRegistry().apply { resume() }
+    val flow = TestFlowNavigationComponent(DefaultComponentContext(lifecycle))
+
+    lifecycle.destroy()
+
+    assertFalse(flow.component.coroutineScope().isActive)
+  }
 }
 
 private fun resumedContext(): ComponentContext = DefaultComponentContext(LifecycleRegistry().apply { resume() })
 
 private class TestFlowNavigationComponent(
   context: ComponentContext = resumedContext(),
+  override val component: FlowComponent = ScopeFlowComponent(),
 ) : FlowNavigationComponent<TestConfig, TestChild>(context) {
   override fun initialConfig(): List<TestConfig> = listOf(TestConfig.Root)
 
@@ -109,6 +128,8 @@ private class TestFlowNavigationComponent(
 
 // Hosts TestFlowNavigationComponent as a nested flow
 private class TestParentFlow : FlowNavigationComponent<TestParentConfig, TestParentChild>(resumedContext()) {
+  override val component: FlowComponent = ScopeFlowComponent()
+
   override fun initialConfig(): List<TestParentConfig> = listOf(TestParentConfig.Nested)
 
   override fun transition(event: Event): FlowTransition<TestParentConfig> {
@@ -134,6 +155,20 @@ private class TestParentFlow : FlowNavigationComponent<TestParentConfig, TestPar
   }
 
   fun configs(): List<Any> = stack.value.items.map { it.configuration }
+}
+
+private class ScopeFlowComponent : FlowComponent {
+  private val scope = CoroutineScope(Job())
+
+  override fun viewModelProviders(): Set<ViewModelProvider> = emptySet()
+
+  override fun assistedViewModelProviders(): Set<AssistedViewModelProvider> = emptySet()
+
+  override fun flowViewModelProviders(): Set<ViewModelProvider> = emptySet()
+
+  override fun assistedFlowViewModelProviders(): Set<AssistedViewModelProvider> = emptySet()
+
+  override fun coroutineScope(): CoroutineScope = scope
 }
 
 private sealed interface TestConfig {

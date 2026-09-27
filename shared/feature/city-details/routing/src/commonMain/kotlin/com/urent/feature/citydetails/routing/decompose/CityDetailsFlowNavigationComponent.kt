@@ -16,7 +16,7 @@ import com.urent.feature.citydetails.ui.screen.cityDetails.CityDetailsViewModel
 @Stable
 class CityDetailsFlowNavigationComponent(
   context: ComponentContext,
-  val component: CityDetailsFlowComponent,
+  override val component: CityDetailsFlowComponent,
   private val cityId: Long,
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.CityDetails)

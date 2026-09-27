@@ -19,6 +19,7 @@ essenty = "2.5.0"
 
 # MVI
 orbit = "12.0.1"
+remo = "9.0.1"
 
 # Codegen
 kotlin-poet = "1.18.1"
@@ -79,6 +80,7 @@ essenty-back-handler = { module = "com.arkivanov.essenty:back-handler", version.
 # MVI
 orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbit" }
 orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbit" }
+remo = { module = "ru.kode:remo", version.ref = "remo" }
 
 # Codegen
 ksp-processor-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }

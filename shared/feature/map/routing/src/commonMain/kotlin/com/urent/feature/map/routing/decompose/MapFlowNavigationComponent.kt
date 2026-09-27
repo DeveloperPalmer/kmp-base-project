@@ -16,7 +16,7 @@ import com.urent.feature.map.ui.screen.map.MapViewModel
 @Stable
 class MapFlowNavigationComponent(
   context: ComponentContext,
-  val component: MapFlowComponent,
+  override val component: MapFlowComponent,
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.Map)
 

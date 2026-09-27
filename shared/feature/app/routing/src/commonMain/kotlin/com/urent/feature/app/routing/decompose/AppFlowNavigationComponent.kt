@@ -14,7 +14,7 @@ import com.urent.feature.home.routing.decompose.HomeFlowNavigationComponent
 @Stable
 class AppFlowNavigationComponent(
   context: ComponentContext,
-  val component: AppFlowComponent,
+  override val component: AppFlowComponent,
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.Home)
 

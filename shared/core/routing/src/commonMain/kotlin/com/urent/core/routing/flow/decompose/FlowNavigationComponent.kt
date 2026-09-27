@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.doOnDestroy
+import com.urent.core.routing.di.FlowComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,6 +19,8 @@ import kotlinx.coroutines.launch
 abstract class FlowNavigationComponent<Config : Any, Child : Node>(
   protected val context: ComponentContext,
 ) : FlowNode<Config>() {
+  abstract val component: FlowComponent
+
   abstract fun initialConfig(): List<Config>
 
   protected abstract val childFactory: (Config, ComponentContext) -> Child
@@ -28,7 +31,10 @@ abstract class FlowNavigationComponent<Config : Any, Child : Node>(
   private val eventScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
   init {
-    context.lifecycle.doOnDestroy { eventScope.cancel() }
+    context.lifecycle.doOnDestroy {
+      eventScope.cancel()
+      component.coroutineScope().cancel()
+    }
   }
 
   // There is an initialization conflict between stack and childFactory fields,
