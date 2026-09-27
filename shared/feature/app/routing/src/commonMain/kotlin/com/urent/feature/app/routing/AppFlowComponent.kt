@@ -1,15 +1,10 @@
 package com.urent.feature.app.routing
 
+import androidx.compose.runtime.Stable
 import com.urent.core.domain.di.AppFlowScope
-import com.urent.core.domain.di.ForegroundScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesSubcomponent
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import com.urent.core.routing.di.FlowComponent
+import com.urent.lib.annotation.MergeSubcomponent
 
-@SingleIn(AppFlowScope::class)
-@ContributesSubcomponent(AppFlowScope::class)
-interface AppFlowComponent {
-  @ContributesSubcomponent.Factory(ForegroundScope::class)
-  interface Factory {
-    fun create(): AppFlowComponent
-  }
-}
+@Stable
+@MergeSubcomponent(AppFlowScope::class)
+interface AppFlowComponent : FlowComponent

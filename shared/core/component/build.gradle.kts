@@ -13,4 +13,5 @@ dependencies {
   commonMainApi(projects.shared.core.domain)
   commonMainApi(projects.shared.core.ui)
   commonMainApi(projects.shared.feature.app.routing)
+  commonMainImplementation(projects.shared.lib.annotation)
 }
