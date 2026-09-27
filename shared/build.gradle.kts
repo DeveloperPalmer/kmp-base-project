@@ -10,11 +10,14 @@ dependencies {
   commonMainApi(projects.shared.core.data)
   commonMainApi(projects.shared.core.ui)
   commonMainApi(projects.shared.core.uikit)
+  commonMainApi(projects.shared.core.routing)
   commonMainApi(projects.shared.core.component)
 
+  commonMainApi(libs.bundles.decompose)
   commonMainApi(projects.shared.resources)
 
   commonMainApi(projects.shared.feature.app.ui)
+  commonMainApi(projects.shared.feature.app.routing)
 }
 
 kotlin {
@@ -30,11 +33,14 @@ kotlin {
       export(projects.shared.core.data)
       export(projects.shared.core.ui)
       export(projects.shared.core.uikit)
+      export(projects.shared.core.routing)
       export(projects.shared.core.component)
 
+      export(libs.bundles.decompose)
       export(projects.shared.resources)
 
       export(projects.shared.feature.app.ui)
+      export(projects.shared.feature.app.routing)
     }
   }
 }

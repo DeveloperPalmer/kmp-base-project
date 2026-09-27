@@ -46,7 +46,7 @@ android {
 
 dependencies {
   implementation(projects.shared.core.component)
-  implementation(projects.shared.feature.app.ui)
+  implementation(projects.shared.feature.app.routing)
 
   implementation(libs.androidx.activity.compose)
 

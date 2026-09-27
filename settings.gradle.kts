@@ -37,6 +37,8 @@ include(
   ":shared:core:data",
   ":shared:core:ui",
   ":shared:core:uikit",
+  ":shared:core:routing",
   ":shared:core:component",
   ":shared:feature:app:ui",
+  ":shared:feature:app:routing",
 )
