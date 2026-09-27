@@ -26,7 +26,6 @@ class CitiesDataRepository(
   private val httpClient: HttpClient,
   private val citiesDatabase: CitiesDatabase,
 ) : CitiesRepository {
-
   override suspend fun fetchCities(query: String, page: Int, limit: Int) {
     return withContext(Dispatchers.IO) {
       val request = CitiesRequest(

@@ -58,6 +58,7 @@ class HomeTabsFlowNavigationComponent(
     context.lifecycle.doOnDestroy {
       eventScope.cancel()
       viewModel.destroy()
+      component.coroutineScope().cancel()
     }
   }
 
