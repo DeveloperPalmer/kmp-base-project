@@ -5,9 +5,6 @@ import androidx.compose.runtime.Immutable
 @Immutable
 sealed interface ContentLoadState {
   @Immutable
-  data object NotStarted : ContentLoadState
-
-  @Immutable
   data object Loading : ContentLoadState
 
   @Immutable

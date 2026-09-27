@@ -1,9 +1,8 @@
 package com.urent.core.ui.mvi
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -13,7 +12,6 @@ import org.orbitmvi.orbit.syntax.Syntax
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class BaseViewModelTest {
   @Test
   fun `handles every view intent`() = runTest {
@@ -48,9 +46,19 @@ class BaseViewModelTest {
     assertEquals(listOf("a"), viewModel.state().debounced)
     viewModel.destroy()
   }
+
+  @Test
+  fun `applies blocking view intent before dispatch returns`() = runTest {
+    val viewModel = TestViewModel(StandardTestDispatcher(testScheduler))
+
+    viewModel.dispatch(TestIntent.Query("a"))
+    viewModel.dispatch(TestIntent.Input("b"))
+
+    assertEquals(listOf("b"), viewModel.state().handled)
+    viewModel.destroy()
+  }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 private fun TestScope.testViewModel() = TestViewModel(UnconfinedTestDispatcher(testScheduler))
 
 private fun TestViewModel.state(): TestState = container.stateFlow.value
@@ -62,9 +70,9 @@ private data class TestState(
 
 private sealed interface TestIntent {
   data class Query(val text: String) : TestIntent
+  data class Input(val text: String) : TestIntent, BlockingViewIntent
 }
 
-@OptIn(FlowPreview::class)
 private class TestViewModel(dispatcher: CoroutineDispatcher) : BaseViewModel<TestState, TestIntent, Nothing>() {
   // Orbit runs on the test dispatcher, so debounce uses virtual time
   override val container = viewModelScope.orbitContainer<TestState, Nothing>(
@@ -82,6 +90,7 @@ private class TestViewModel(dispatcher: CoroutineDispatcher) : BaseViewModel<Tes
   override suspend fun Syntax<TestState, Nothing>.handle(viewIntent: TestIntent) {
     when (viewIntent) {
       is TestIntent.Query -> reduce { state.copy(handled = state.handled + viewIntent.text) }
+      is TestIntent.Input -> reduce { state.copy(handled = state.handled + viewIntent.text) }
     }
   }
 }

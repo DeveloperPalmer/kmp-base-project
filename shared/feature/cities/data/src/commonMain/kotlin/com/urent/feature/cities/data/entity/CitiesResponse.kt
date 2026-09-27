@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class CitiesResponse(
   val items: List<CityItem>,
+  val total: Int,
 ) {
   @Serializable
   internal data class CityItem(

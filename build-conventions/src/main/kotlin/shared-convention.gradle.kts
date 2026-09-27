@@ -19,6 +19,12 @@ kotlin {
 
   iosArm64()
   iosSimulatorArm64()
+
+  compilerOptions {
+    freeCompilerArgs.add("-opt-in=androidx.paging.ExperimentalPagingApi")
+    freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
+    freeCompilerArgs.add("-opt-in=kotlinx.coroutines.FlowPreview")
+  }
 }
 
 dependencies {

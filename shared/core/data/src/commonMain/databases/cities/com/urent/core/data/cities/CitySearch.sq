@@ -1,0 +1,11 @@
+CREATE TABLE CitySearch (
+  searchQuery TEXT NOT NULL PRIMARY KEY,
+  nextPage INTEGER
+);
+
+upsert:
+INSERT OR REPLACE INTO CitySearch(searchQuery, nextPage)
+VALUES (?, ?);
+
+getNextPage:
+SELECT nextPage FROM CitySearch WHERE searchQuery = ?;
