@@ -41,6 +41,9 @@ include(
   ":shared:core:component",
   ":shared:feature:app:ui",
   ":shared:feature:app:routing",
+  ":shared:feature:cities:domain",
+  ":shared:feature:cities:ui",
+  ":shared:feature:cities:routing",
   ":shared:lib:annotation",
   ":lib:generator",
 )
