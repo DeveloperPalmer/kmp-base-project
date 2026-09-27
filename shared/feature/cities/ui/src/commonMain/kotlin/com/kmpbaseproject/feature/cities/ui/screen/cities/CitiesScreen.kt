@@ -30,9 +30,12 @@ fun CitiesScreen(viewModel: CitiesViewModel) {
         text = stringResource(Res.string.cities_screen_title),
         style = AppTheme.typography.title3,
       )
-      Button(onClick = { onIntent(ViewIntent.OpenDetails) }) {
+      Button(onClick = { onIntent(ViewIntent.OpenDetails(cityId = TEST_CITY_ID)) }) {
         Text(text = stringResource(Res.string.details))
       }
     }
   }
 }
+
+// Until the cities list is loaded, Details opens a test city
+private const val TEST_CITY_ID = 1L

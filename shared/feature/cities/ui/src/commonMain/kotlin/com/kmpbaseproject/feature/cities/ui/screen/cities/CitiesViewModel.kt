@@ -15,7 +15,7 @@ class CitiesViewModel : BaseViewModel<ViewState, ViewIntent, Nothing>() {
 
   override suspend fun Syntax<ViewState, Nothing>.handle(viewIntent: ViewIntent) {
     when (viewIntent) {
-      is ViewIntent.OpenDetails -> sendEvent(FlowEvent.CityDetailsRequested)
+      is ViewIntent.OpenDetails -> sendEvent(FlowEvent.CityDetailsRequested(viewIntent.cityId))
     }
   }
 }

@@ -7,8 +7,8 @@ import com.arkivanov.decompose.extensions.compose.pages.ChildPages
 import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.kmpbaseproject.feature.cities.routing.decompose.CitiesFlow
-import com.kmpbaseproject.feature.hometabs.ui.screen.home.HomeScreen
 import com.kmpbaseproject.feature.hometabs.ui.entity.Tab
+import com.kmpbaseproject.feature.hometabs.ui.screen.home.HomeScreen
 import com.kmpbaseproject.feature.map.routing.decompose.MapFlow
 
 @Composable

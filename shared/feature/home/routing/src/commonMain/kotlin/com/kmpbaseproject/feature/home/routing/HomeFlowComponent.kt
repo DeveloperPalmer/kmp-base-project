@@ -6,6 +6,7 @@ import com.kmpbaseproject.core.ui.viewmodel.AssistedViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.ViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.emptyAssistedViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.emptyViewModelProvider
+import com.kmpbaseproject.feature.citydetails.routing.CityDetailsFlowComponent
 import com.kmpbaseproject.feature.home.domain.di.HomeScope
 import com.kmpbaseproject.feature.hometabs.routing.HomeTabsFlowComponent
 import com.kmpbaseproject.lib.annotation.MergeSubcomponent
@@ -17,6 +18,7 @@ import me.tatarka.inject.annotations.Provides
 @MergeSubcomponent(HomeScope::class)
 interface HomeFlowComponent : FlowComponent {
   fun homeTabsFlowComponent(): HomeTabsFlowComponent
+  fun cityDetailsFlowComponent(): CityDetailsFlowComponent
 
   @Provides
   @IntoSet

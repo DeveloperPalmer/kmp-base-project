@@ -1,4 +1,4 @@
-package com.kmpbaseproject.feature.cities.ui.screen.cityDetails
+package com.kmpbaseproject.feature.citydetails.ui.screen.cityDetails
 
 import androidx.compose.runtime.Immutable
 
