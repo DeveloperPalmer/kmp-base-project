@@ -153,7 +153,7 @@ internal class FlowComponentBindingProcessor(
                       AnnotationSpec.builder(FlowCoroutineScope::class).addMember(scopeArgument).build(),
                     )
                   ).addStatement(
-                    "return %T(%M + %T(\"${scope.simpleName}\" + %T { _, _ -> }))",
+                    "return %T(%M + %T(\"${scope.simpleName}\") + %T { _, _ -> })",
                     CoroutineScope::class,
                     MemberName(Dispatchers::class.asClassName(), "Default"),
                     CoroutineName::class,
