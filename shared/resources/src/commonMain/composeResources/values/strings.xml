@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">UrentSample</string>
+  <string name="cities_screen_title">Cities</string>
+  <string name="city_details_screen_title">City details</string>
+  <string name="details">Details</string>
 </resources>
