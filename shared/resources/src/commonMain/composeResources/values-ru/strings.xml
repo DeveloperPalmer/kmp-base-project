@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">KmpBaseProject</string>
+  <string name="cities_screen_title">Города</string>
+  <string name="city_details_screen_title">Детали города</string>
+  <string name="details">Детали</string>
 </resources>
