@@ -119,8 +119,10 @@ internal val flowTreeSource = SourceFile.kotlin(
     @ViewModel(AppFlowScope::class)
     class MainViewModel(
       val repository: AppFlowRepository,
-    ) : BaseViewModel<Unit, Nothing>() {
+    ) : BaseViewModel<Unit, Nothing, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+      override fun dispatch(viewIntent: Nothing) = Unit
     }
 
     @Inject
@@ -129,8 +131,10 @@ internal val flowTreeSource = SourceFile.kotlin(
       @Assisted val title: String,
       val repository: AppFlowRepository,
       @Assisted val id: Int,
-    ) : BaseViewModel<Unit, Nothing>() {
+    ) : BaseViewModel<Unit, Nothing, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+      override fun dispatch(viewIntent: Nothing) = Unit
     }
 
     // NestedFlowScope has plain view models only
@@ -138,8 +142,10 @@ internal val flowTreeSource = SourceFile.kotlin(
     @ViewModel(NestedFlowScope::class)
     class NestedViewModel(
       val repository: AppFlowRepository,
-    ) : BaseViewModel<Unit, Nothing>() {
+    ) : BaseViewModel<Unit, Nothing, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+      override fun dispatch(viewIntent: Nothing) = Unit
     }
 
     // SiblingFlowScope has assisted view models only
@@ -147,8 +153,10 @@ internal val flowTreeSource = SourceFile.kotlin(
     @ViewModel(SiblingFlowScope::class)
     class SiblingViewModel(
       @Assisted val title: String,
-    ) : BaseViewModel<Unit, Nothing>() {
+    ) : BaseViewModel<Unit, Nothing, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+      override fun dispatch(viewIntent: Nothing) = Unit
     }
   """,
 )
@@ -181,8 +189,10 @@ internal val mainViewModelSource = SourceFile.kotlin(
 
     @Inject
     @ViewModel(AppFlowScope::class)
-    class MainViewModel : BaseViewModel<Unit, Nothing>() {
+    class MainViewModel : BaseViewModel<Unit, Nothing, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+      override fun dispatch(viewIntent: Nothing) = Unit
     }
   """,
 )
@@ -199,8 +209,10 @@ internal val secondViewModelSource = SourceFile.kotlin(
 
     @Inject
     @ViewModel(AppFlowScope::class)
-    class SecondViewModel : BaseViewModel<Unit, Nothing>() {
+    class SecondViewModel : BaseViewModel<Unit, Nothing, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+      override fun dispatch(viewIntent: Nothing) = Unit
     }
   """,
 )

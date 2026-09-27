@@ -11,5 +11,5 @@ kotlin {
 dependencies {
   commonMainApi(projects.shared.core.domain)
   commonMainApi(projects.shared.resources)
-  commonMainApi(libs.orbit.core)
+  commonMainApi(libs.bundles.orbit)
 }

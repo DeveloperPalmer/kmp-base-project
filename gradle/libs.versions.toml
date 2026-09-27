@@ -69,6 +69,7 @@ essenty-back-handler = { module = "com.arkivanov.essenty:back-handler", version.
 
 # MVI
 orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbit" }
+orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbit" }
 
 # Codegen
 ksp-processor-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
@@ -125,6 +126,10 @@ decompose = [
     "essenty-state-keeper",
     "essenty-instance-keeper",
     "essenty-back-handler",
+]
+orbit = [
+    "orbit-core",
+    "orbit-compose",
 ]
 compile-test = [
     "kctfork-core",
