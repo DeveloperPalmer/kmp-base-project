@@ -1,6 +1,16 @@
 plugins {
   id("shared-convention")
   kotlin("plugin.serialization")
+  id("app.cash.sqldelight")
+}
+
+sqldelight {
+  databases {
+    create("CitiesDatabase") {
+      srcDirs("src/commonMain/databases/cities")
+      packageName.set("com.urent.core.data.cities")
+    }
+  }
 }
 
 kotlin {
@@ -11,9 +21,11 @@ kotlin {
   sourceSets {
     androidMain.dependencies {
       implementation(libs.ktor.okhttp)
+      implementation(libs.sqldelight.android.driver)
     }
     iosMain.dependencies {
       implementation(libs.ktor.darwin)
+      implementation(libs.sqldelight.native.driver)
     }
   }
 }
