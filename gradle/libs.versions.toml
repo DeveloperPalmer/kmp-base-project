@@ -10,6 +10,10 @@ anvil = "0.1.7"
 # Network
 ktor = "3.6.0"
 
+# Navigation
+decompose = "3.5.0"
+essenty = "2.5.0"
+
 # UI
 compose-multiplatform = "1.12.1"
 compose-material3 = "1.9.0" # Material3 is versioned separately from Compose Multiplatform
@@ -44,6 +48,14 @@ ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = 
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+
+# Navigation
+decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-compose-ext = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
+essenty-state-keeper = { module = "com.arkivanov.essenty:state-keeper", version.ref = "essenty" }
+essenty-instance-keeper = { module = "com.arkivanov.essenty:instance-keeper", version.ref = "essenty" }
+essenty-back-handler = { module = "com.arkivanov.essenty:back-handler", version.ref = "essenty" }
 
 # UI
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
@@ -81,6 +93,14 @@ compose = [
     "compose-animation",
     "compose-material3",
     "compose-resources",
+]
+decompose = [
+    "decompose-core",
+    "decompose-compose-ext",
+    "essenty-lifecycle",
+    "essenty-state-keeper",
+    "essenty-instance-keeper",
+    "essenty-back-handler",
 ]
 
 [plugins]
