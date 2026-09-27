@@ -10,4 +10,5 @@ dependencies {
   implementation(libs.kotlin.serialization.plugin)
   implementation(libs.compose.plugin)
   implementation(libs.detekt.plugin)
+  implementation(libs.sqldelight.plugin)
 }
