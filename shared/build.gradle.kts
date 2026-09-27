@@ -16,7 +16,6 @@ dependencies {
   commonMainApi(libs.bundles.decompose)
   commonMainApi(projects.shared.resources)
 
-  commonMainApi(projects.shared.feature.app.ui)
   commonMainApi(projects.shared.feature.app.routing)
 }
 
@@ -39,7 +38,6 @@ kotlin {
       export(libs.bundles.decompose)
       export(projects.shared.resources)
 
-      export(projects.shared.feature.app.ui)
       export(projects.shared.feature.app.routing)
     }
   }
