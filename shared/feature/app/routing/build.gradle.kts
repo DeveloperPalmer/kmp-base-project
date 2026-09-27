@@ -11,4 +11,5 @@ kotlin {
 dependencies {
   commonMainApi(projects.shared.core.routing)
   commonMainApi(projects.shared.feature.app.ui)
+  commonMainImplementation(projects.shared.lib.annotation)
 }

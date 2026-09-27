@@ -1,6 +1,7 @@
 package com.urent.core.component
 
 import com.urent.core.domain.di.ForegroundScope
+import com.urent.feature.app.routing.AppFlowComponent
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesSubcomponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -12,4 +13,6 @@ interface IosForegroundComponent : ForegroundComponent {
   interface Factory {
     fun create(): IosForegroundComponent
   }
+
+  override fun appFlowComponent(): AppFlowComponent
 }
