@@ -9,6 +9,7 @@ import com.urent.core.component.AndroidAppComponent
 import com.urent.core.component.AppComponentHolder
 import com.urent.feature.app.routing.decompose.AppFlow
 import com.urent.feature.app.routing.decompose.AppFlowNavigationComponent
+import com.urent.uikit.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,9 +24,11 @@ class MainActivity : ComponentActivity() {
       context = defaultComponentContext(),
     )
     setContent {
-      AppFlow(
-        component = appFlowNavigationComponent
-      )
+      AppTheme {
+        AppFlow(
+          component = appFlowNavigationComponent
+        )
+      }
     }
   }
 }

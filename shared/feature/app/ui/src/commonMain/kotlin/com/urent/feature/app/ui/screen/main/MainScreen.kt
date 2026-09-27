@@ -14,7 +14,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MainScreen() {
-  AppTheme {
+
     Box(
       modifier = Modifier
         .fillMaxSize()
@@ -26,5 +26,5 @@ fun MainScreen() {
         style = AppTheme.typography.title3
       )
     }
-  }
+
 }
