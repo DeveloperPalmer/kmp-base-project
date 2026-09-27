@@ -1,4 +1,4 @@
-package com.urent.feature.app.ui
+package com.urent.feature.app.ui.screen.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,7 +13,7 @@ import com.urent.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun App() {
+fun MainScreen() {
   AppTheme {
     Box(
       modifier = Modifier
