@@ -5,9 +5,9 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.doOnDestroy
-import com.kmpbaseproject.core.ui.routing.Event
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,14 +17,12 @@ import kotlinx.coroutines.launch
 @Stable
 abstract class FlowNavigationComponent<Config : Any, Child : Node>(
   protected val context: ComponentContext,
-) {
+) : FlowNode<Config>() {
   abstract fun initialConfig(): List<Config>
 
-  abstract fun transition(event: Event)
-
-  protected val nav = StackNavigation<Config>()
-
   protected abstract val childFactory: (Config, ComponentContext) -> Child
+
+  protected val navigation = StackNavigation<Config>()
 
   // Orbit runs intents on Dispatchers.Default, Decompose navigates on the main thread
   private val eventScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -37,7 +35,7 @@ abstract class FlowNavigationComponent<Config : Any, Child : Node>(
   // using lazy as a workaround to super class field initialization order problem
   val stack: Value<ChildStack<*, Child>> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
     context.childStack(
-      source = nav,
+      source = navigation,
       serializer = null,
       initialStack = { initialConfig() },
       handleBackButton = true,
@@ -45,14 +43,21 @@ abstract class FlowNavigationComponent<Config : Any, Child : Node>(
       val child = childFactory(config, componentContext)
       if (child is Screen) {
         val events = eventScope.launch {
-          child.viewModel.events.collect { event -> transition(event) }
+          child.viewModel.events.collect { event -> dispatch(event) }
         }
         componentContext.lifecycle.doOnDestroy {
           events.cancel()
           child.viewModel.destroy()
         }
       }
+      if (child is Flow) {
+        adopt(child)
+      }
       child
     }
+  }
+
+  override fun navigateTo(config: Config) {
+    navigation.pushToFront(config)
   }
 }

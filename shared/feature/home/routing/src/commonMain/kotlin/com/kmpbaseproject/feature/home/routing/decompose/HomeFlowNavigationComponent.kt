@@ -2,8 +2,9 @@ package com.kmpbaseproject.feature.home.routing.decompose
 
 import androidx.compose.runtime.Stable
 import com.arkivanov.decompose.ComponentContext
+import com.kmpbaseproject.core.routing.flow.decompose.Flow
 import com.kmpbaseproject.core.routing.flow.decompose.FlowNavigationComponent
-import com.kmpbaseproject.core.routing.flow.decompose.Node
+import com.kmpbaseproject.core.routing.flow.decompose.FlowTransition
 import com.kmpbaseproject.core.ui.routing.Event
 import com.kmpbaseproject.feature.home.routing.HomeFlowComponent
 import com.kmpbaseproject.feature.home.routing.decompose.HomeFlowNavigationComponent.Child
@@ -17,12 +18,18 @@ class HomeFlowNavigationComponent(
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.HomeTabs)
 
-  override fun transition(event: Event) = Unit
+  override fun transition(event: Event): FlowTransition<Config> {
+    return FlowTransition.Ignore
+  }
 
   override val childFactory: (Config, ComponentContext) -> Child = { config, componentContext ->
     when (config) {
       is Config.HomeTabs -> {
-        Child.HomeTabs(HomeTabsFlowNavigationComponent(componentContext, component.homeTabsFlowComponent()))
+        val component = HomeTabsFlowNavigationComponent(
+          context = componentContext,
+          component = component.homeTabsFlowComponent()
+        )
+        Child.HomeTabs(component)
       }
     }
   }
@@ -31,7 +38,7 @@ class HomeFlowNavigationComponent(
     data object HomeTabs : Config
   }
 
-  sealed interface Child : Node {
-    data class HomeTabs(val component: HomeTabsFlowNavigationComponent) : Child
+  sealed interface Child : Flow {
+    data class HomeTabs(override val component: HomeTabsFlowNavigationComponent) : Child
   }
 }
