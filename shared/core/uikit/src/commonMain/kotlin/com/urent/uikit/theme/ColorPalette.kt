@@ -24,5 +24,7 @@ internal object ColorPalette {
   val white = Color(0xFFFFFFFF)
   val whiteAlpha70 = Color(0xB2FFFFFF)
   val whiteAlpha50 = Color(0x80FFFFFF)
+  val whiteAlpha8 = Color(0x14FFFFFF)
   val blackAlpha10 = Color(0x1A000000)
+  val blackAlpha8 = Color(0x14000000)
 }

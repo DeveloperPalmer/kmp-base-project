@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
   commonMainApi(versionCatalogs.named("libs").findBundle("compose").get())
+  androidRuntimeClasspath(versionCatalogs.named("libs").findLibrary("compose.ui.tooling").get())
 }
 
 kotlin {

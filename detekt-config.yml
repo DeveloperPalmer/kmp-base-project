@@ -117,6 +117,8 @@ style:
     active: true
   UnusedImport:
     active: true
+  UnusedPrivateFunction:
+    ignoreAnnotated: ['Preview']
   UnusedPrivateProperty:
     allowedNames: '_|ignored|expected|serialVersionUID'
   UseDataClass:

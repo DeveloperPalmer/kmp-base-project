@@ -13,6 +13,7 @@ data class AppColors(
   val dragger: Color,
   val icon: Icon,
   val pins: Pins,
+  val skeleton: Skeleton,
   val text: Text,
 ) {
   @Immutable
@@ -53,6 +54,12 @@ data class AppColors(
     val foreground: Color,
     val primaryBackground: Color,
     val stroke: Color,
+  )
+
+  @Immutable
+  data class Skeleton(
+    val background: Color,
+    val highlight: Color,
   )
 
   @Immutable

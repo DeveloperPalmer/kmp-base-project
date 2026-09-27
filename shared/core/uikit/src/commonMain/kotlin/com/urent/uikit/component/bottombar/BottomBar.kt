@@ -1,4 +1,4 @@
-package com.urent.uikit.bottombar
+package com.urent.uikit.component.bottombar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
