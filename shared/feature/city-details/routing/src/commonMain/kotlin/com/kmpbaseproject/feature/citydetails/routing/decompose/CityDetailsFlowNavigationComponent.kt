@@ -16,7 +16,7 @@ import com.kmpbaseproject.feature.citydetails.ui.screen.cityDetails.CityDetailsV
 @Stable
 class CityDetailsFlowNavigationComponent(
   context: ComponentContext,
-  val component: CityDetailsFlowComponent,
+  override val component: CityDetailsFlowComponent,
   private val cityId: Long,
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.CityDetails)

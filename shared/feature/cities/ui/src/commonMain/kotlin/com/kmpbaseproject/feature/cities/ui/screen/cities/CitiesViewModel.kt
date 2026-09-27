@@ -1,6 +1,7 @@
 package com.kmpbaseproject.feature.cities.ui.screen.cities
 
 import com.kmpbaseproject.core.ui.mvi.BaseViewModel
+import com.kmpbaseproject.feature.cities.domain.CitiesModel
 import com.kmpbaseproject.feature.cities.domain.di.CitiesScope
 import com.kmpbaseproject.feature.cities.ui.routing.FlowEvent
 import com.kmpbaseproject.lib.annotation.ViewModel
@@ -10,8 +11,16 @@ import org.orbitmvi.orbit.syntax.Syntax
 
 @Inject
 @ViewModel(CitiesScope::class)
-class CitiesViewModel : BaseViewModel<ViewState, ViewIntent, Nothing>() {
-  override val container = viewModelScope.orbitContainer<ViewState, Nothing>(ViewState)
+class CitiesViewModel(
+  citiesModel: CitiesModel,
+) : BaseViewModel<ViewState, ViewIntent, Nothing>() {
+  override val container = viewModelScope.orbitContainer<ViewState, Nothing>(ViewState) {
+    citiesModel.fetchCities.start(
+      argument1 = "",
+      argument2 = FIRST_PAGE,
+      argument3 = PAGE_LIMIT
+    )
+  }
 
   override suspend fun Syntax<ViewState, Nothing>.handle(viewIntent: ViewIntent) {
     when (viewIntent) {
@@ -19,3 +28,6 @@ class CitiesViewModel : BaseViewModel<ViewState, ViewIntent, Nothing>() {
     }
   }
 }
+
+private const val FIRST_PAGE = 1
+private const val PAGE_LIMIT = 20

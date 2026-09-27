@@ -14,7 +14,7 @@ import com.kmpbaseproject.feature.home.routing.decompose.HomeFlowNavigationCompo
 @Stable
 class AppFlowNavigationComponent(
   context: ComponentContext,
-  val component: AppFlowComponent,
+  override val component: AppFlowComponent,
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.Home)
 

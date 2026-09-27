@@ -16,7 +16,7 @@ import com.kmpbaseproject.feature.hometabs.routing.decompose.HomeTabsFlowNavigat
 @Stable
 class HomeFlowNavigationComponent(
   context: ComponentContext,
-  val component: HomeFlowComponent,
+  override val component: HomeFlowComponent,
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.HomeTabs)
 

@@ -22,10 +22,7 @@ import com.squareup.kotlinpoet.ksp.writeTo
 import com.kmpbaseproject.lib.annotation.FlowCoroutineScope
 import com.kmpbaseproject.lib.annotation.MergeSubcomponent
 import com.kmpbaseproject.lib.annotation.ScopedViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Provides
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesSubcomponent
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
@@ -153,11 +150,8 @@ internal class FlowComponentBindingProcessor(
                       AnnotationSpec.builder(FlowCoroutineScope::class).addMember(scopeArgument).build(),
                     )
                   ).addStatement(
-                    "return %T(%M + %T(\"${scope.simpleName}\") + %T { _, _ -> })",
-                    CoroutineScope::class,
-                    MemberName(Dispatchers::class.asClassName(), "Default"),
-                    CoroutineName::class,
-                    CoroutineExceptionHandler::class,
+                    "return %M(\"${scope.simpleName}\")",
+                    MemberName("com.kmpbaseproject.core.domain", "createCoroutineScope"),
                   ).returns(returnType = CoroutineScope::class)
                   .build(),
               )
