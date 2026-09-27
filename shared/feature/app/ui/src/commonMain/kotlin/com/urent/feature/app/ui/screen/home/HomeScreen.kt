@@ -1,4 +1,4 @@
-package com.urent.feature.app.ui.screen.main
+package com.urent.feature.app.ui.screen.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,18 +13,16 @@ import com.urent.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun MainScreen() {
-
-    Box(
-      modifier = Modifier
-        .fillMaxSize()
-        .background(AppTheme.colors.background.primary),
-      contentAlignment = Alignment.Center
-    ) {
-      Text(
-        text = stringResource(Res.string.app_name),
-        style = AppTheme.typography.title3
-      )
-    }
-
+fun HomeScreen() {
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(AppTheme.colors.background.primary),
+    contentAlignment = Alignment.Center
+  ) {
+    Text(
+      text = stringResource(Res.string.app_name),
+      style = AppTheme.typography.title3
+    )
+  }
 }
