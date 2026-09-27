@@ -1,7 +1,8 @@
-package com.urent.feature.cities.ui.screen.cityDetails
+package com.urent.feature.citydetails.ui.screen.cityDetails
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,16 +16,21 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CityDetailsScreen(viewModel: CityDetailsViewModel) {
-  return MviScreen(viewModel) { _, _ ->
-    Box(
+  return MviScreen(viewModel) { state, _ ->
+    Column(
       modifier = Modifier
         .fillMaxSize()
         .background(AppTheme.colors.background.primary),
-      contentAlignment = Alignment.Center,
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Text(
         text = stringResource(Res.string.city_details_screen_title),
         style = AppTheme.typography.title3,
+      )
+      Text(
+        text = state.cityId.toString(),
+        style = AppTheme.typography.body1,
       )
     }
   }

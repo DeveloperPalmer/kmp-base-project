@@ -6,6 +6,7 @@ import com.urent.core.ui.viewmodel.AssistedViewModelProvider
 import com.urent.core.ui.viewmodel.ViewModelProvider
 import com.urent.core.ui.viewmodel.emptyAssistedViewModelProvider
 import com.urent.core.ui.viewmodel.emptyViewModelProvider
+import com.urent.feature.citydetails.routing.CityDetailsFlowComponent
 import com.urent.feature.home.domain.di.HomeScope
 import com.urent.feature.hometabs.routing.HomeTabsFlowComponent
 import com.urent.lib.annotation.MergeSubcomponent
@@ -17,6 +18,7 @@ import me.tatarka.inject.annotations.Provides
 @MergeSubcomponent(HomeScope::class)
 interface HomeFlowComponent : FlowComponent {
   fun homeTabsFlowComponent(): HomeTabsFlowComponent
+  fun cityDetailsFlowComponent(): CityDetailsFlowComponent
 
   @Provides
   @IntoSet
