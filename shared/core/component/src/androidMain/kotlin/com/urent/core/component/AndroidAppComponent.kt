@@ -11,4 +11,6 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 abstract class AndroidAppComponent(
   @get:Provides
   val buildConfiguration: BuildConfiguration,
-) : AppComponent
+) : AppComponent {
+  abstract fun foregroundComponentFactory(): AndroidForegroundComponent.Factory
+}
