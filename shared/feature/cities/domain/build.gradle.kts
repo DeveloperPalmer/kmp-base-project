@@ -10,4 +10,6 @@ kotlin {
 
 dependencies {
   commonMainApi(projects.shared.core.domain)
+
+  commonMainApi(libs.paging.common)
 }

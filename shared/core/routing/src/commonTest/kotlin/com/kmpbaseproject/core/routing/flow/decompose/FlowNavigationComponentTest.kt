@@ -13,7 +13,6 @@ import com.kmpbaseproject.core.ui.viewmodel.AssistedViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -27,7 +26,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class FlowNavigationComponentTest {
   @BeforeTest
   fun setUp() {

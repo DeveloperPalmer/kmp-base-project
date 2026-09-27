@@ -11,7 +11,6 @@ kotlin {
 dependencies {
   commonMainApi(libs.kotlin.coroutines.core)
   commonMainApi(libs.remo)
-  commonMainApi(libs.kotlin.result)
   commonMainApi(libs.kotlin.inject.runtime)
   commonMainApi(libs.anvil.runtime)
   commonMainApi(libs.anvil.runtime.optional)

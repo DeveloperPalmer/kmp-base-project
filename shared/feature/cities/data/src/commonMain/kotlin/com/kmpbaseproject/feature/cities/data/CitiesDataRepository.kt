@@ -2,8 +2,8 @@
 
 package com.kmpbaseproject.feature.cities.data
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
+import androidx.paging.PagingSource
+import app.cash.sqldelight.paging3.QueryPagingSource
 import com.kmpbaseproject.core.data.cities.CitiesDatabase
 import com.kmpbaseproject.feature.cities.data.entity.CitiesRequest
 import com.kmpbaseproject.feature.cities.data.entity.CitiesResponse
@@ -14,7 +14,6 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.resources.get
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -36,7 +35,10 @@ class CitiesDataRepository(
       val response = httpClient.get(request).body<CitiesResponse>()
 
       citiesDatabase.transaction {
-        response.items.forEach { city ->
+        if (page == FIRST_PAGE) {
+          citiesDatabase.citySearchResultQueries.deleteBySearchQuery(query)
+        }
+        response.items.forEachIndexed { index, city ->
           citiesDatabase.cityQueries.insert(
             id = city.id,
             name = city.name,
@@ -45,13 +47,62 @@ class CitiesDataRepository(
             lon = city.lon,
             pop = city.pop,
           )
+          citiesDatabase.citySearchResultQueries.insert(
+            cityId = city.id,
+            searchQuery = query,
+            position = positionInSearch(
+              page = page,
+              pageSize = limit,
+              indexOnPage = index
+            ),
+          )
         }
+        citiesDatabase.citySearchQueries.upsert(
+          searchQuery = query,
+          nextPage = nextPageOrNull(
+            page = page,
+            pageSize = limit,
+            total = response.total
+          ),
+        )
       }
     }
   }
 
-  override val cities: Flow<List<City>> = citiesDatabase.cityQueries
-    .getCities(::City)
-    .asFlow()
-    .mapToList(Dispatchers.IO)
+  override suspend fun nextPage(query: String): Int? {
+    return withContext(Dispatchers.IO) {
+      citiesDatabase.citySearchQueries
+        .getNextPage(query)
+        .executeAsOneOrNull()
+        ?.nextPage
+        ?.toInt()
+    }
+  }
+
+  override fun cities(query: String): PagingSource<Int, City> {
+    return QueryPagingSource(
+      context = Dispatchers.IO,
+      transacter = citiesDatabase.citySearchResultQueries,
+      countQuery = citiesDatabase.citySearchResultQueries.countQuery(query),
+      queryProvider = { limit, offset ->
+        citiesDatabase.citySearchResultQueries.getCities(
+          searchQuery = query,
+          limit = limit,
+          offset = offset,
+          mapper = ::City
+        )
+      }
+    )
+  }
 }
+
+private fun positionInSearch(page: Int, pageSize: Int, indexOnPage: Int): Long {
+  return ((page - FIRST_PAGE) * pageSize + indexOnPage).toLong()
+}
+
+private fun nextPageOrNull(page: Int, pageSize: Int, total: Int): Long? {
+  val loadedCount = page * pageSize
+  return if (loadedCount < total) (page + 1).toLong() else null
+}
+
+private const val FIRST_PAGE = 1
