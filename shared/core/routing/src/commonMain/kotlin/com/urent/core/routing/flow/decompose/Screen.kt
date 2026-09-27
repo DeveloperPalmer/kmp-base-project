@@ -7,3 +7,7 @@ interface Node
 interface Screen : Node {
   val viewModel: BaseViewModel<*, *, *>
 }
+
+interface Flow : Node {
+  val component: FlowNode<*>
+}

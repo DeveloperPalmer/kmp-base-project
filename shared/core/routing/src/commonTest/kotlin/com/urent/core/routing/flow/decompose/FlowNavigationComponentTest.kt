@@ -3,7 +3,6 @@ package com.urent.core.routing.flow.decompose
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.urent.core.ui.mvi.BaseViewModel
@@ -33,7 +32,7 @@ class FlowNavigationComponentTest {
   }
 
   @Test
-  fun `passes screen event to transition`() {
+  fun `navigates to config returned by transition`() {
     val flow = TestFlowNavigationComponent()
 
     flow.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
@@ -46,9 +45,9 @@ class FlowNavigationComponentTest {
     val flow = TestFlowNavigationComponent()
     flow.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
 
-    flow.activeViewModel().dispatch(TestFlowEvent.BackRequested)
+    flow.activeViewModel().dispatch(TestFlowEvent.MoreRequested)
 
-    assertEquals(listOf(TestConfig.Root), flow.configs())
+    assertEquals(listOf(TestConfig.Root, TestConfig.Details, TestConfig.More), flow.configs())
   }
 
   @Test
@@ -56,29 +55,83 @@ class FlowNavigationComponentTest {
     val flow = TestFlowNavigationComponent()
     flow.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
     val details = flow.activeViewModel()
-    details.dispatch(TestFlowEvent.BackRequested)
+    flow.back()
 
     details.dispatch(TestFlowEvent.DetailsRequested)
 
     assertEquals(listOf(TestConfig.Root), flow.configs())
   }
+
+  @Test
+  fun `passes ignored event to parent flow`() {
+    val parent = TestParentFlow()
+
+    parent.nested().activeViewModel().dispatch(TestFlowEvent.ParentRequested)
+
+    assertEquals(listOf(TestParentConfig.Nested, TestParentConfig.Other), parent.configs())
+  }
+
+  @Test
+  fun `keeps handled event in its flow`() {
+    val parent = TestParentFlow()
+    val nested = parent.nested()
+
+    nested.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
+
+    assertEquals(listOf(TestConfig.Root, TestConfig.Details), nested.configs())
+    assertEquals(listOf(TestParentConfig.Nested), parent.configs())
+  }
 }
 
-private class TestFlowNavigationComponent : FlowNavigationComponent<TestConfig, TestChild>(
-  context = DefaultComponentContext(LifecycleRegistry().apply { resume() }),
-) {
+private fun resumedContext(): ComponentContext = DefaultComponentContext(LifecycleRegistry().apply { resume() })
+
+private class TestFlowNavigationComponent(
+  context: ComponentContext = resumedContext(),
+) : FlowNavigationComponent<TestConfig, TestChild>(context) {
   override fun initialConfig(): List<TestConfig> = listOf(TestConfig.Root)
 
-  override fun transition(event: Event) {
-    when (event) {
-      TestFlowEvent.DetailsRequested -> nav.pushToFront(TestConfig.Details)
-      TestFlowEvent.BackRequested -> nav.pop()
+  override fun transition(event: Event): FlowTransition<TestConfig> {
+    return when (event) {
+      TestFlowEvent.DetailsRequested -> FlowTransition.NavigateTo(TestConfig.Details)
+      TestFlowEvent.MoreRequested -> FlowTransition.NavigateTo(TestConfig.More)
+      else -> FlowTransition.Ignore
     }
   }
 
   override val childFactory: (TestConfig, ComponentContext) -> TestChild = { _, _ -> TestChild(TestViewModel()) }
 
+  fun back() = navigation.pop()
+
   fun activeViewModel(): TestViewModel = stack.value.active.instance.viewModel
+
+  fun configs(): List<Any> = stack.value.items.map { it.configuration }
+}
+
+// Hosts TestFlowNavigationComponent as a nested flow
+private class TestParentFlow : FlowNavigationComponent<TestParentConfig, TestParentChild>(resumedContext()) {
+  override fun initialConfig(): List<TestParentConfig> = listOf(TestParentConfig.Nested)
+
+  override fun transition(event: Event): FlowTransition<TestParentConfig> {
+    return when (event) {
+      TestFlowEvent.ParentRequested -> FlowTransition.NavigateTo(TestParentConfig.Other)
+      else -> FlowTransition.Ignore
+    }
+  }
+
+  override val childFactory: (TestParentConfig, ComponentContext) -> TestParentChild = { config, componentContext ->
+    when (config) {
+      TestParentConfig.Nested -> TestParentChild.Nested(TestFlowNavigationComponent(componentContext))
+      TestParentConfig.Other -> TestParentChild.Other
+    }
+  }
+
+  fun nested(): TestFlowNavigationComponent {
+    return (
+      stack.value.items
+        .first()
+        .instance as TestParentChild.Nested
+    ).component
+  }
 
   fun configs(): List<Any> = stack.value.items.map { it.configuration }
 }
@@ -86,13 +139,25 @@ private class TestFlowNavigationComponent : FlowNavigationComponent<TestConfig, 
 private sealed interface TestConfig {
   data object Root : TestConfig
   data object Details : TestConfig
+  data object More : TestConfig
 }
 
 private class TestChild(override val viewModel: TestViewModel) : Screen
 
+private sealed interface TestParentConfig {
+  data object Nested : TestParentConfig
+  data object Other : TestParentConfig
+}
+
+private sealed interface TestParentChild : Node {
+  class Nested(override val component: TestFlowNavigationComponent) : TestParentChild, Flow
+  data object Other : TestParentChild
+}
+
 private sealed interface TestFlowEvent : Event {
   data object DetailsRequested : TestFlowEvent
-  data object BackRequested : TestFlowEvent
+  data object MoreRequested : TestFlowEvent
+  data object ParentRequested : TestFlowEvent
 }
 
 // Sends every intent to its flow as is
