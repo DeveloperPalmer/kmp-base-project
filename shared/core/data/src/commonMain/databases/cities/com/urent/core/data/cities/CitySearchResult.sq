@@ -1,0 +1,24 @@
+CREATE TABLE CitySearchResult (
+  searchQuery TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  cityId INTEGER NOT NULL,
+  PRIMARY KEY (searchQuery, position)
+);
+
+insert:
+INSERT OR REPLACE INTO CitySearchResult(searchQuery, position, cityId)
+VALUES (?, ?, ?);
+
+deleteBySearchQuery:
+DELETE FROM CitySearchResult WHERE searchQuery = ?;
+
+countQuery:
+SELECT count(*) FROM CitySearchResult WHERE searchQuery = ?;
+
+getCities:
+SELECT City.id, City.name, City.country
+FROM CitySearchResult
+JOIN City ON City.id = CitySearchResult.cityId
+WHERE CitySearchResult.searchQuery = :searchQuery
+ORDER BY CitySearchResult.position
+LIMIT :limit OFFSET :offset;

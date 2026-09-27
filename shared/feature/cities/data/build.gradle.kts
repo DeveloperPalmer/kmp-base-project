@@ -12,4 +12,6 @@ kotlin {
 dependencies {
   commonMainApi(projects.shared.core.data)
   commonMainApi(projects.shared.feature.cities.domain)
+
+  commonMainImplementation(libs.sqldelight.paging)
 }

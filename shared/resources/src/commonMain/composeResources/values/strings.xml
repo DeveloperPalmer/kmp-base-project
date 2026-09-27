@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">UrentSample</string>
+  <string name="cities_list_title">City list</string>
   <string name="cities_screen_title">Cities</string>
+  <string name="cities_search_placeholder">Enter city name</string>
   <string name="city_details_screen_title">City details</string>
   <string name="details">Details</string>
   <string name="error_no_connection_title">No internet connection</string>
   <string name="error_something_went_wrong_title">Something went wrong</string>
   <string name="map_screen_title">Map</string>
+  <string name="retry">Try again</string>
 </resources>

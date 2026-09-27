@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.blockingIntent
 import org.orbitmvi.orbit.syntax.Syntax
 
 @Stable
@@ -24,11 +25,17 @@ abstract class BaseViewModel<S : Any, I : Any, SE : Any> : OrbitContainerHost<S,
   @PublishedApi
   internal val viewIntents = MutableSharedFlow<I>(extraBufferCapacity = Channel.UNLIMITED)
 
-  // Each view intent runs as its own Orbit intent, in parallel with the others
   fun dispatch(viewIntent: I) {
-    intent {
-      viewIntents.emit(viewIntent)
-      handle(viewIntent)
+    if (viewIntent is BlockingViewIntent) {
+      blockingIntent {
+        viewIntents.emit(viewIntent)
+        handle(viewIntent)
+      }
+    } else {
+      intent {
+        viewIntents.emit(viewIntent)
+        handle(viewIntent)
+      }
     }
   }
 
