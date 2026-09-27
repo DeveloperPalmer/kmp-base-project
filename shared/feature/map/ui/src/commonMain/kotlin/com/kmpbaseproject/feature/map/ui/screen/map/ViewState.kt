@@ -1,4 +1,4 @@
-package com.kmpbaseproject.feature.app.ui.screen.home
+package com.kmpbaseproject.feature.map.ui.screen.map
 
 import androidx.compose.runtime.Immutable
 

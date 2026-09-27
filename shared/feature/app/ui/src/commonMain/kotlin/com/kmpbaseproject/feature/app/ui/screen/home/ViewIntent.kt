@@ -3,4 +3,7 @@ package com.kmpbaseproject.feature.app.ui.screen.home
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data object ViewState
+sealed interface ViewIntent {
+  @Immutable
+  data class SelectTab(val tab: Tab) : ViewIntent
+}

@@ -4,4 +4,5 @@
   <string name="cities_screen_title">Города</string>
   <string name="city_details_screen_title">Детали города</string>
   <string name="details">Детали</string>
+  <string name="map_screen_title">Карта</string>
 </resources>

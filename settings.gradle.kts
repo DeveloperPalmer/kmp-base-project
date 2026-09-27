@@ -44,6 +44,9 @@ include(
   ":shared:feature:cities:domain",
   ":shared:feature:cities:ui",
   ":shared:feature:cities:routing",
+  ":shared:feature:map:domain",
+  ":shared:feature:map:ui",
+  ":shared:feature:map:routing",
   ":shared:lib:annotation",
   ":lib:generator",
 )

@@ -1,20 +1,43 @@
 package com.kmpbaseproject.feature.app.routing.decompose
 
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import com.arkivanov.decompose.extensions.compose.pages.ChildPages
+import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.kmpbaseproject.feature.app.ui.screen.home.HomeScreen
+import com.kmpbaseproject.feature.app.ui.screen.home.Tab
 import com.kmpbaseproject.feature.cities.routing.decompose.CitiesFlow
+import com.kmpbaseproject.feature.map.routing.decompose.MapFlow
 
 @Composable
 fun HomeFlow(component: HomeFlowNavigationComponent) {
-  HomeScreen(viewModel = component.viewModel) {
+  val pages by component.pages.subscribeAsState()
+  HomeScreen(
+    viewModel = component.viewModel,
+    selectedTab = Tab.entries[pages.selectedIndex],
+  ) {
     ChildPages(
-      pages = component.pages,
+      pages = pages,
       onPageSelected = component::selectPage,
+      scrollAnimation = PagesScrollAnimation.Default,
+      pager = { modifier, state, key, pageContent ->
+        HorizontalPager(
+          state = state,
+          modifier = modifier,
+          userScrollEnabled = false,
+          key = key,
+          pageContent = pageContent,
+        )
+      },
     ) { _, page ->
       when (page) {
         is HomeFlowNavigationComponent.Child.Cities -> {
           CitiesFlow(component = page.component)
+        }
+        is HomeFlowNavigationComponent.Child.Map -> {
+          MapFlow(component = page.component)
         }
       }
     }
