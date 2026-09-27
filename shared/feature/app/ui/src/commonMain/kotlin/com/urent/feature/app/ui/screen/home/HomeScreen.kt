@@ -7,13 +7,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.urent.core.ui.mvi.MviScreen
 import com.urent.resources.Res
 import com.urent.resources.app_name
 import com.urent.uikit.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel: HomeViewModel) = MviScreen(viewModel) { _, _ ->
   Box(
     modifier = Modifier
       .fillMaxSize()

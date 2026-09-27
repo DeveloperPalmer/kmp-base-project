@@ -3,7 +3,7 @@ package com.urent.core.routing.flow.decompose
 import com.urent.core.routing.di.FlowComponent
 import com.urent.core.ui.mvi.BaseViewModel
 
-inline fun <reified VM : BaseViewModel<*, *>> FlowComponent.viewModel(
+inline fun <reified VM : BaseViewModel<*, *, *>> FlowComponent.viewModel(
   vararg params: Any?,
 ): VM {
   val key = VM::class.qualifiedName.orEmpty()

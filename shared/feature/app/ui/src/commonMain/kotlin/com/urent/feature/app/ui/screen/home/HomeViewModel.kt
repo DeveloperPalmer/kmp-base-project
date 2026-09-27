@@ -8,6 +8,8 @@ import org.orbitmvi.orbit.orbitContainer
 
 @Inject
 @ViewModel(AppFlowScope::class)
-class HomeViewModel : BaseViewModel<ViewState, Nothing>() {
+class HomeViewModel : BaseViewModel<ViewState, Nothing, Nothing>() {
   override val container = viewModelScope.orbitContainer<ViewState, Nothing>(ViewState)
+
+  override fun dispatch(viewIntent: Nothing) = Unit
 }
