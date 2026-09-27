@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.kmpbaseproject.core.ui.mvi.MviScreen
 import com.kmpbaseproject.feature.hometabs.ui.entity.Tab
-import com.kmpbaseproject.uikit.bottombar.BottomBar
-import com.kmpbaseproject.uikit.bottombar.BottomBarItem
+import com.kmpbaseproject.uikit.component.bottombar.BottomBar
+import com.kmpbaseproject.uikit.component.bottombar.BottomBarItem
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

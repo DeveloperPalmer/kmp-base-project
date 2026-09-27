@@ -1,4 +1,4 @@
-package com.kmpbaseproject.uikit.bottombar
+package com.kmpbaseproject.uikit.component.bottombar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

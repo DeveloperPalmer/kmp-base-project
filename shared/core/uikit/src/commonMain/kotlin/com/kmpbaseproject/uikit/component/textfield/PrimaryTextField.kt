@@ -1,0 +1,76 @@
+package com.kmpbaseproject.uikit.component.textfield
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import com.kmpbaseproject.resources.Res
+import com.kmpbaseproject.resources.ic_search_24
+import com.kmpbaseproject.uikit.theme.AppTheme
+import org.jetbrains.compose.resources.DrawableResource
+
+@Composable
+fun PrimaryTextField(
+  value: String,
+  onValueChange: (String) -> Unit,
+  placeholder: String,
+  trailingIcon: DrawableResource,
+  modifier: Modifier = Modifier,
+) {
+  TextFieldInternal(
+    modifier = modifier,
+    value = value,
+    onValueChange = onValueChange,
+    shape = AppTheme.shapes.regular,
+    placeholder = placeholder,
+    trailingIcon = trailingIcon,
+    colors = TextFieldDefaults.primaryDefaultColors(),
+  )
+}
+
+@Preview
+@Composable
+private fun PrimaryTextFieldPreviewLight(
+  @PreviewParameter(TextFieldPreviewStateProvider::class)
+  state: TextFieldPreviewState,
+) {
+  AppTheme(useDarkTheme = false) {
+    PrimaryTextFieldPreviewContent(state)
+  }
+}
+
+@Preview
+@Composable
+private fun PrimaryTextFieldPreviewDark(
+  @PreviewParameter(TextFieldPreviewStateProvider::class)
+  state: TextFieldPreviewState,
+) {
+  AppTheme(useDarkTheme = true) {
+    PrimaryTextFieldPreviewContent(state)
+  }
+}
+
+@Composable
+private fun PrimaryTextFieldPreviewContent(state: TextFieldPreviewState) {
+  Box(
+    modifier = Modifier
+      .background(AppTheme.colors.background.primary)
+      .padding(16.dp),
+  ) {
+    TextFieldInternal(
+      modifier = Modifier.fillMaxWidth(),
+      value = state.text,
+      onValueChange = {},
+      focused = state.focused,
+      shape = AppTheme.shapes.regular,
+      placeholder = PREVIEW_PLACEHOLDER,
+      trailingIcon = Res.drawable.ic_search_24,
+      colors = TextFieldDefaults.primaryDefaultColors(),
+    )
+  }
+}

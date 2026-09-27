@@ -31,6 +31,10 @@ val LightAppColors = AppColors(
     primaryBackground = ColorPalette.platinumGray80,
     stroke = ColorPalette.white
   ),
+  skeleton = AppColors.Skeleton(
+    background = ColorPalette.blackAlpha8,
+    highlight = ColorPalette.blackAlpha8
+  ),
   text = AppColors.Text(
     primary = ColorPalette.platinumGray90,
     secondary = ColorPalette.platinumGray60,
@@ -68,6 +72,10 @@ val DarkAppColors = AppColors(
     foreground = ColorPalette.white,
     primaryBackground = ColorPalette.platinumGray80,
     stroke = ColorPalette.white
+  ),
+  skeleton = AppColors.Skeleton(
+    background = ColorPalette.whiteAlpha8,
+    highlight = ColorPalette.whiteAlpha8
   ),
   text = AppColors.Text(
     primary = ColorPalette.white,
