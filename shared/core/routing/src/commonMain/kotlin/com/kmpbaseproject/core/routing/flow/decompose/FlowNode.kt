@@ -10,14 +10,20 @@ abstract class FlowNode<Config : Any> {
 
   protected abstract fun navigateTo(config: Config)
 
+  protected abstract fun navigateBack()
+
   protected fun adopt(child: Flow) {
     child.component.parent = this
   }
 
   protected fun dispatch(event: Event) {
     when (val transition = transition(event)) {
+      is FlowTransition.Stay -> {}
       is FlowTransition.Ignore -> {
         parent?.dispatch(event)
+      }
+      is FlowTransition.Back -> {
+        navigateBack()
       }
       is FlowTransition.NavigateTo -> {
         navigateTo(transition.config)

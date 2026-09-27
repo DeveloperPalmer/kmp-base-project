@@ -39,6 +39,7 @@ internal fun TextFieldInternal(
   shape: Shape,
   placeholder: String,
   trailingIcon: DrawableResource,
+  trailingIconDescription: String,
   modifier: Modifier = Modifier,
   interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
   // Явный фокус нужен только превью: collectIsFocusedAsState и requestFocus работают через
@@ -82,6 +83,7 @@ internal fun TextFieldInternal(
         placeholderColor = placeholderColor.value,
         placeholder = placeholder,
         trailingIcon = trailingIcon,
+        trailingIconDescription = trailingIconDescription,
         trailingIconColor = trailingIconColor.value,
         innerTextField = innerTextField,
       )
@@ -99,6 +101,7 @@ private fun TextFieldDecoration(
   placeholderColor: Color,
   placeholder: String,
   trailingIcon: DrawableResource,
+  trailingIconDescription: String,
   trailingIconColor: Color,
   modifier: Modifier = Modifier,
   innerTextField: @Composable () -> Unit,
@@ -129,8 +132,8 @@ private fun TextFieldDecoration(
     }
     Icon(
       painter = painterResource(trailingIcon),
-      contentDescription = null,
       tint = trailingIconColor,
+      contentDescription = trailingIconDescription,
     )
   }
 }

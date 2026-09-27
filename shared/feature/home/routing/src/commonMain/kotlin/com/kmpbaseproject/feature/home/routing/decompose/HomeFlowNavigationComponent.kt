@@ -6,12 +6,13 @@ import com.kmpbaseproject.core.routing.flow.decompose.Flow
 import com.kmpbaseproject.core.routing.flow.decompose.FlowNavigationComponent
 import com.kmpbaseproject.core.routing.flow.decompose.FlowTransition
 import com.kmpbaseproject.core.ui.routing.Event
-import com.kmpbaseproject.feature.cities.ui.routing.FlowEvent
 import com.kmpbaseproject.feature.citydetails.routing.decompose.CityDetailsFlowNavigationComponent
 import com.kmpbaseproject.feature.home.routing.HomeFlowComponent
 import com.kmpbaseproject.feature.home.routing.decompose.HomeFlowNavigationComponent.Child
 import com.kmpbaseproject.feature.home.routing.decompose.HomeFlowNavigationComponent.Config
 import com.kmpbaseproject.feature.hometabs.routing.decompose.HomeTabsFlowNavigationComponent
+import com.kmpbaseproject.feature.cities.ui.routing.FlowEvent as CitiesFlowEvent
+import com.kmpbaseproject.feature.citydetails.ui.routing.FlowEvent as CityDetailsFlowEvent
 
 @Stable
 class HomeFlowNavigationComponent(
@@ -22,8 +23,11 @@ class HomeFlowNavigationComponent(
 
   override fun transition(event: Event): FlowTransition<Config> {
     return when (event) {
-      is FlowEvent.CityDetailsRequested -> {
+      is CitiesFlowEvent.CityDetailsRequested -> {
         FlowTransition.NavigateTo(Config.CityDetails(event.cityId))
+      }
+      is CityDetailsFlowEvent.CityDetailsDismissed -> {
+        FlowTransition.Back
       }
       else -> {
         FlowTransition.Ignore

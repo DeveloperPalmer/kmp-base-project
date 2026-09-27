@@ -38,4 +38,6 @@ dependencies {
   commonMainImplementation(libs.ktor.content)
   commonMainImplementation(libs.ktor.json)
   commonMainImplementation(libs.ktor.logging)
+
+  commonMainApi(libs.sqldelight.coroutines)
 }

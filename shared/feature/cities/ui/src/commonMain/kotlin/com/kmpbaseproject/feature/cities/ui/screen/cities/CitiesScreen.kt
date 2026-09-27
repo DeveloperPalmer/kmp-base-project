@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -41,6 +40,7 @@ import com.kmpbaseproject.resources.ic_pin_24
 import com.kmpbaseproject.resources.ic_search_24
 import com.kmpbaseproject.resources.retry
 import com.kmpbaseproject.uikit.component.button.PrimaryButton
+import com.kmpbaseproject.uikit.component.message.ErrorMessage
 import com.kmpbaseproject.uikit.component.shimmer.ShimmerSpacer
 import com.kmpbaseproject.uikit.component.textfield.PrimaryTextField
 import com.kmpbaseproject.uikit.theme.AppTheme
@@ -62,7 +62,7 @@ fun CitiesScreen(viewModel: CitiesViewModel) {
       }
       is ContentLoadState.Loading,
       is ContentLoadState.Ready -> {
-        CitiesList(
+        CitiesReady(
           query = state.citiesSearchQuery,
           cities = cities,
           isLoading = contentLoadState == ContentLoadState.Loading,
@@ -74,7 +74,7 @@ fun CitiesScreen(viewModel: CitiesViewModel) {
 }
 
 @Composable
-private fun CitiesList(
+private fun CitiesReady(
   query: String,
   cities: LazyPagingItems<City>,
   isLoading: Boolean,
@@ -93,7 +93,8 @@ private fun CitiesList(
         value = query,
         onValueChange = { onIntent(ViewIntent.QueryChanged(it)) },
         placeholder = stringResource(Res.string.cities_search_placeholder),
-        trailingIcon = Res.drawable.ic_search_24
+        trailingIcon = Res.drawable.ic_search_24,
+        trailingIconDescription = "search icon"
       )
       VSpacer(8.dp)
       LazyColumn(
@@ -103,7 +104,7 @@ private fun CitiesList(
       ) {
         if (isLoading) {
           itemsIndexed(SKELETON_WIDTHS) { index, width ->
-            SkeletonCell(
+            Skeleton(
               width = width,
               showDivider = index > 0
             )
@@ -115,7 +116,7 @@ private fun CitiesList(
           ) { index ->
             val city = cities[index]
             if (city != null) {
-              CityCell(
+              CityItem(
                 city = city,
                 showDivider = index > 0,
                 onClick = { onIntent(ViewIntent.OpenDetails(city.id)) }
@@ -124,7 +125,7 @@ private fun CitiesList(
           }
           if (cities.loadState.append is LoadState.Loading) {
             item {
-              SkeletonCell(
+              Skeleton(
                 width = SKELETON_WIDTHS.first(),
                 showDivider = cities.itemCount > 0
               )
@@ -154,14 +155,14 @@ private fun CitiesTopBar() {
 }
 
 @Composable
-private fun CityCell(
+private fun CityItem(
   city: City,
   showDivider: Boolean,
   onClick: () -> Unit,
 ) {
-  CityCellLayout(
-    showDivider = showDivider,
-    modifier = Modifier.clickable(onClick = onClick)
+  City(
+    modifier = Modifier.clickable(onClick = onClick),
+    showDivider = showDivider
   ) {
     Text(
       modifier = Modifier.padding(vertical = 4.dp),
@@ -175,11 +176,11 @@ private fun CityCell(
 }
 
 @Composable
-private fun SkeletonCell(
+private fun Skeleton(
   width: Dp,
   showDivider: Boolean,
 ) {
-  CityCellLayout(showDivider = showDivider) {
+  City(showDivider = showDivider) {
     ShimmerSpacer(
       modifier = Modifier.padding(vertical = 4.dp),
       width = width,
@@ -189,7 +190,7 @@ private fun SkeletonCell(
 }
 
 @Composable
-private fun CityCellLayout(
+private fun City(
   showDivider: Boolean,
   modifier: Modifier = Modifier,
   content: @Composable RowScope.() -> Unit,
@@ -210,8 +211,8 @@ private fun CityCellLayout(
     ) {
       Icon(
         painter = painterResource(Res.drawable.ic_pin_24),
-        contentDescription = null,
-        tint = AppTheme.colors.icon.secondary
+        tint = AppTheme.colors.icon.secondary,
+        contentDescription = "pin icon"
       )
       content()
     }
@@ -232,12 +233,7 @@ private fun CitiesError(
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     WSpacer()
-    Text(
-      text = stringResource(error.message.title),
-      style = AppTheme.typography.title2,
-      color = AppTheme.colors.text.primary,
-      textAlign = TextAlign.Center
-    )
+    ErrorMessage(message = error.message)
     WSpacer()
     VSpacer(16.dp)
     PrimaryButton(

@@ -11,23 +11,35 @@ import com.kmpbaseproject.core.ui.routing.Event
 import com.kmpbaseproject.feature.citydetails.routing.CityDetailsFlowComponent
 import com.kmpbaseproject.feature.citydetails.routing.decompose.CityDetailsFlowNavigationComponent.Child
 import com.kmpbaseproject.feature.citydetails.routing.decompose.CityDetailsFlowNavigationComponent.Config
+import com.kmpbaseproject.feature.citydetails.ui.routing.FlowEvent
 import com.kmpbaseproject.feature.citydetails.ui.screen.cityDetails.CityDetailsViewModel
+import io.ktor.http.URLBuilder
 
 @Stable
 class CityDetailsFlowNavigationComponent(
   context: ComponentContext,
   override val component: CityDetailsFlowComponent,
-  private val cityId: Long,
+  private val cityId: Long
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.CityDetails)
 
   override fun transition(event: Event): FlowTransition<Config> {
-    return FlowTransition.Ignore
+    return when (event) {
+      is FlowEvent.CitySearchRequested -> {
+        component.appLauncher().openWebsite(citySearchUrl(event.cityName))
+        FlowTransition.Stay
+      }
+      else -> {
+        FlowTransition.Ignore
+      }
+    }
   }
 
   override val childFactory: (Config, ComponentContext) -> Child = { config, _ ->
     when (config) {
-      is Config.CityDetails -> Child.CityDetails(component.viewModel<CityDetailsViewModel>(cityId))
+      is Config.CityDetails -> {
+        Child.CityDetails(component.viewModel<CityDetailsViewModel>(cityId))
+      }
     }
   }
 
@@ -39,3 +51,11 @@ class CityDetailsFlowNavigationComponent(
     data class CityDetails(override val viewModel: CityDetailsViewModel) : Child, Screen
   }
 }
+
+private fun citySearchUrl(cityName: String): String {
+  return URLBuilder(SEARCH_URL)
+    .apply { parameters.append("q", cityName) }
+    .buildString()
+}
+
+private const val SEARCH_URL = "https://www.google.com/search"
