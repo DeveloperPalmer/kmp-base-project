@@ -1,6 +1,0 @@
-package com.urent.feature.app.ui.screen.home
-
-import androidx.compose.runtime.Immutable
-
-@Immutable
-data object ViewState
