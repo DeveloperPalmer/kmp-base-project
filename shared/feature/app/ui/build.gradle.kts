@@ -10,5 +10,4 @@ kotlin {
 
 dependencies {
   commonMainApi(projects.shared.core.uikit)
-  commonMainImplementation(projects.shared.lib.annotation)
 }

@@ -12,4 +12,5 @@ dependencies {
   commonMainApi(libs.kotlin.inject.runtime)
   commonMainApi(libs.anvil.runtime)
   commonMainApi(libs.anvil.runtime.optional)
+  commonMainApi(projects.shared.lib.annotation)
 }
