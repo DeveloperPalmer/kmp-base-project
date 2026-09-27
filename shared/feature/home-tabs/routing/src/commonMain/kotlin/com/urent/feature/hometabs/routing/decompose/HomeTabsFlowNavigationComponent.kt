@@ -81,6 +81,9 @@ class HomeTabsFlowNavigationComponent(
     pagesNavigation.navigate { current -> current.copy(selectedIndex = current.items.indexOf(config)) }
   }
 
+  // Tabs have no back stack
+  override fun navigateBack() = Unit
+
   private fun child(config: Config, context: ComponentContext): Child {
     val child = when (config) {
       is Config.Cities -> {

@@ -69,6 +69,25 @@ class FlowNavigationComponentTest {
   }
 
   @Test
+  fun `navigates back on back transition`() {
+    val flow = TestFlowNavigationComponent()
+    flow.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
+
+    flow.activeViewModel().dispatch(TestFlowEvent.BackRequested)
+
+    assertEquals(listOf(TestConfig.Root), flow.configs())
+  }
+
+  @Test
+  fun `passes open url up to parent flow`() {
+    val parent = TestParentFlow()
+
+    parent.nested().activeViewModel().dispatch(TestFlowEvent.LinkRequested)
+
+    assertEquals(listOf(TEST_URL), parent.openedUrls)
+  }
+
+  @Test
   fun `passes ignored event to parent flow`() {
     val parent = TestParentFlow()
 
@@ -111,6 +130,8 @@ private class TestFlowNavigationComponent(
     return when (event) {
       TestFlowEvent.DetailsRequested -> FlowTransition.NavigateTo(TestConfig.Details)
       TestFlowEvent.MoreRequested -> FlowTransition.NavigateTo(TestConfig.More)
+      TestFlowEvent.BackRequested -> FlowTransition.Back
+      TestFlowEvent.LinkRequested -> FlowTransition.OpenUrl(TEST_URL)
       else -> FlowTransition.Ignore
     }
   }
@@ -127,6 +148,11 @@ private class TestFlowNavigationComponent(
 // Hosts TestFlowNavigationComponent as a nested flow
 private class TestParentFlow : FlowNavigationComponent<TestParentConfig, TestParentChild>(resumedContext()) {
   override val component: FlowComponent = ScopeFlowComponent()
+  val openedUrls = mutableListOf<String>()
+
+  override fun openUrl(url: String) {
+    openedUrls += url
+  }
 
   override fun initialConfig(): List<TestParentConfig> = listOf(TestParentConfig.Nested)
 
@@ -169,6 +195,8 @@ private class ScopeFlowComponent : FlowComponent {
   override fun coroutineScope(): CoroutineScope = scope
 }
 
+private const val TEST_URL = "https://example.com"
+
 private sealed interface TestConfig {
   data object Root : TestConfig
   data object Details : TestConfig
@@ -190,6 +218,8 @@ private sealed interface TestParentChild : Node {
 private sealed interface TestFlowEvent : Event {
   data object DetailsRequested : TestFlowEvent
   data object MoreRequested : TestFlowEvent
+  data object BackRequested : TestFlowEvent
+  data object LinkRequested : TestFlowEvent
   data object ParentRequested : TestFlowEvent
 }
 

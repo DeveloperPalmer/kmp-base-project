@@ -7,6 +7,9 @@ CREATE TABLE City (
   pop INTEGER NOT NULL
 );
 
+getCity:
+SELECT name, country, pop FROM City WHERE id = ?;
+
 insert:
 INSERT OR REPLACE INTO City(id, name, country, lat, lon, pop)
 VALUES (?, ?, ?, ?, ?, ?);

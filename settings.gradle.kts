@@ -50,6 +50,7 @@ include(
   ":shared:feature:cities:ui",
   ":shared:feature:cities:routing",
   ":shared:feature:city-details:domain",
+  ":shared:feature:city-details:data",
   ":shared:feature:city-details:ui",
   ":shared:feature:city-details:routing",
   ":shared:feature:map:domain",
