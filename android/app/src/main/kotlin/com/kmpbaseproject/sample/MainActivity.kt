@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
       .foregroundComponentFactory()
       .create()
     val appFlowNavigationComponent = AppFlowNavigationComponent(
-      component = foregroundComponent.appFlowComponentFactory().create(),
+      component = foregroundComponent.appFlowComponent(),
       context = defaultComponentContext(),
     )
     setContent {

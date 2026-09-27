@@ -41,4 +41,6 @@ include(
   ":shared:core:component",
   ":shared:feature:app:ui",
   ":shared:feature:app:routing",
+  ":shared:lib:annotation",
+  ":lib:generator",
 )

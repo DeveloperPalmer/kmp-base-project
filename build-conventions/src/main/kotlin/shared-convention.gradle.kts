@@ -30,6 +30,7 @@ dependencies {
     .named("libs")
     .findLibrary("anvil.compiler")
     .get()
+  val generator = project(":lib:generator")
 
   kotlin.targets
     .matching { it.name != "metadata" }
@@ -37,5 +38,6 @@ dependencies {
       val configuration = "ksp" + name.replaceFirstChar(Char::uppercaseChar)
       add(configuration, kotlinInjectCompiler)
       add(configuration, anvilCompiler)
+      add(configuration, generator)
     }
 }

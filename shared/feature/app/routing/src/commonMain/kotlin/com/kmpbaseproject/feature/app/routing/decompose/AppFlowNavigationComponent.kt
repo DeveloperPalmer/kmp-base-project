@@ -5,6 +5,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.kmpbaseproject.core.routing.flow.decompose.FlowNavigationComponent
 import com.kmpbaseproject.core.routing.flow.decompose.Node
 import com.kmpbaseproject.core.routing.flow.decompose.Screen
+import com.kmpbaseproject.core.routing.flow.decompose.viewModel
 import com.kmpbaseproject.feature.app.routing.AppFlowComponent
 import com.kmpbaseproject.feature.app.routing.decompose.AppFlowNavigationComponent.Child
 import com.kmpbaseproject.feature.app.routing.decompose.AppFlowNavigationComponent.Config
@@ -19,7 +20,7 @@ class AppFlowNavigationComponent(
 
   override val childFactory: (Config, ComponentContext) -> Child = { config, _ ->
     when (config) {
-      is Config.Main -> Child.Main(MainViewModel())
+      is Config.Main -> Child.Main(component.viewModel<MainViewModel>())
     }
   }
 

@@ -1,6 +1,7 @@
 package com.kmpbaseproject.core.component
 
 import com.kmpbaseproject.core.domain.di.ForegroundScope
+import com.kmpbaseproject.feature.app.routing.AppFlowComponent
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesSubcomponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -12,4 +13,6 @@ interface AndroidForegroundComponent : ForegroundComponent {
   interface Factory {
     fun create(): AndroidForegroundComponent
   }
+
+  override fun appFlowComponent(): AppFlowComponent
 }
