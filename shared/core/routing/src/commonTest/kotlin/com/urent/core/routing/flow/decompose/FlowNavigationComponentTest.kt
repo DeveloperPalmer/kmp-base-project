@@ -14,6 +14,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.orbitmvi.orbit.orbitContainer
+import org.orbitmvi.orbit.syntax.Syntax
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -96,7 +97,11 @@ private sealed interface TestFlowEvent : Event {
 
 // Sends every intent to its flow as is
 private class TestViewModel : BaseViewModel<Unit, Event, Nothing>() {
-  override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+  // Runs intents in place, so an event reaches the flow before dispatch returns
+  override val container = viewModelScope.orbitContainer<Unit, Nothing>(
+    initialState = Unit,
+    buildSettings = { eventLoopDispatcher = { Dispatchers.Unconfined } },
+  )
 
-  override fun dispatch(viewIntent: Event) = sendEvent(viewIntent)
+  override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Event) = sendEvent(viewIntent)
 }
