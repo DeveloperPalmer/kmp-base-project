@@ -6,6 +6,7 @@ import com.urent.core.routing.flow.decompose.FlowNavigationComponent
 import com.urent.core.routing.flow.decompose.Node
 import com.urent.core.routing.flow.decompose.Screen
 import com.urent.core.routing.flow.decompose.viewModel
+import com.urent.core.ui.routing.Event
 import com.urent.feature.app.routing.AppFlowComponent
 import com.urent.feature.app.routing.decompose.AppFlowNavigationComponent.Child
 import com.urent.feature.app.routing.decompose.AppFlowNavigationComponent.Config
@@ -17,6 +18,8 @@ class AppFlowNavigationComponent(
   val component: AppFlowComponent,
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.Home)
+
+  override fun transition(event: Event) = Unit
 
   override val childFactory: (Config, ComponentContext) -> Child = { config, _ ->
     when (config) {
