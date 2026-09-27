@@ -1,6 +1,0 @@
-package com.kmpbaseproject.feature.app.ui.screen.home
-
-import androidx.compose.runtime.Immutable
-
-@Immutable
-data object ViewState

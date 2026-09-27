@@ -1,32 +1,32 @@
-package com.kmpbaseproject.feature.app.routing
+package com.kmpbaseproject.feature.home.routing
 
 import androidx.compose.runtime.Stable
-import com.kmpbaseproject.core.domain.di.AppFlowScope
 import com.kmpbaseproject.core.routing.di.FlowComponent
 import com.kmpbaseproject.core.ui.viewmodel.AssistedViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.ViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.emptyAssistedViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.emptyViewModelProvider
-import com.kmpbaseproject.feature.home.routing.HomeFlowComponent
+import com.kmpbaseproject.feature.home.domain.di.HomeScope
+import com.kmpbaseproject.feature.hometabs.routing.HomeTabsFlowComponent
 import com.kmpbaseproject.lib.annotation.MergeSubcomponent
 import com.kmpbaseproject.lib.annotation.ScopedViewModel
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 @Stable
-@MergeSubcomponent(AppFlowScope::class)
-interface AppFlowComponent : FlowComponent {
-  fun homeFlowComponent(): HomeFlowComponent
+@MergeSubcomponent(HomeScope::class)
+interface HomeFlowComponent : FlowComponent {
+  fun homeTabsFlowComponent(): HomeTabsFlowComponent
 
   @Provides
   @IntoSet
-  fun emptyAssistedViewModelProviders(): @ScopedViewModel(AppFlowScope::class) AssistedViewModelProvider {
+  fun emptyAssistedViewModelProviders(): @ScopedViewModel(HomeScope::class) AssistedViewModelProvider {
     return emptyAssistedViewModelProvider
   }
 
   @Provides
   @IntoSet
-  fun emptyViewModelProviders(): @ScopedViewModel(AppFlowScope::class) ViewModelProvider {
+  fun emptyViewModelProviders(): @ScopedViewModel(HomeScope::class) ViewModelProvider {
     return emptyViewModelProvider
   }
 }

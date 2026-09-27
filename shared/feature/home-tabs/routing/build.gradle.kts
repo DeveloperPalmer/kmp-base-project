@@ -1,0 +1,17 @@
+plugins {
+  id("compose-convention")
+}
+
+kotlin {
+  android {
+    namespace = "com.kmpbaseproject.feature.hometabs.routing"
+  }
+}
+
+dependencies {
+  commonMainApi(projects.shared.core.routing)
+  commonMainApi(projects.shared.feature.homeTabs.domain)
+  commonMainApi(projects.shared.feature.homeTabs.ui)
+  commonMainApi(projects.shared.feature.cities.routing)
+  commonMainApi(projects.shared.feature.map.routing)
+}

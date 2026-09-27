@@ -8,6 +8,7 @@ import com.kmpbaseproject.core.ui.routing.Event
 import com.kmpbaseproject.feature.app.routing.AppFlowComponent
 import com.kmpbaseproject.feature.app.routing.decompose.AppFlowNavigationComponent.Child
 import com.kmpbaseproject.feature.app.routing.decompose.AppFlowNavigationComponent.Config
+import com.kmpbaseproject.feature.home.routing.decompose.HomeFlowNavigationComponent
 
 @Stable
 class AppFlowNavigationComponent(
@@ -18,10 +19,10 @@ class AppFlowNavigationComponent(
 
   override fun transition(event: Event) = Unit
 
-  override val childFactory: (Config, ComponentContext) -> Child = { config, _ ->
+  override val childFactory: (Config, ComponentContext) -> Child = { config, componentContext ->
     when (config) {
       is Config.Home -> {
-        Child.Home(HomeFlowNavigationComponent(context, component.homeFlowComponent()))
+        Child.Home(HomeFlowNavigationComponent(componentContext, component.homeFlowComponent()))
       }
     }
   }
