@@ -6,9 +6,10 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.doOnDestroy
 
 @Stable
-abstract class FlowNavigationComponent<Config : Any, Child : Any>(
+abstract class FlowNavigationComponent<Config : Any, Child : Node>(
   protected val context: ComponentContext,
 ) {
   abstract fun initialConfig(): List<Config>
@@ -24,7 +25,13 @@ abstract class FlowNavigationComponent<Config : Any, Child : Any>(
       source = nav,
       serializer = null,
       initialStack = { initialConfig() },
-      childFactory = childFactory,
+      childFactory = { config, componentContext ->
+        val child = childFactory(config, componentContext)
+        if (child is Screen) {
+          componentContext.lifecycle.doOnDestroy { child.viewModel.destroy() }
+        }
+        child
+      },
       handleBackButton = true,
     )
   }

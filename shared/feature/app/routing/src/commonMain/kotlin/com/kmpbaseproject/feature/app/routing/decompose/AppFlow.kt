@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.kmpbaseproject.feature.app.ui.App
+import com.kmpbaseproject.feature.app.ui.screen.main.MainScreen
 
 @Composable
 fun AppFlow(component: AppFlowNavigationComponent) {
@@ -14,7 +14,7 @@ fun AppFlow(component: AppFlowNavigationComponent) {
   ) { child ->
     when (child.instance) {
       is AppFlowNavigationComponent.Child.Main -> {
-        App()
+        MainScreen()
       }
     }
   }

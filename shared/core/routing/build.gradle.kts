@@ -10,4 +10,5 @@ kotlin {
 
 dependencies {
   commonMainApi(libs.bundles.decompose)
+  commonMainApi(projects.shared.core.ui)
 }
