@@ -14,6 +14,9 @@ ktor = "3.6.0"
 decompose = "3.5.0"
 essenty = "2.5.0"
 
+# MVI
+orbit = "12.0.1"
+
 # UI
 compose-multiplatform = "1.12.1"
 compose-material3 = "1.9.0" # Material3 is versioned separately from Compose Multiplatform
@@ -56,6 +59,9 @@ essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = 
 essenty-state-keeper = { module = "com.arkivanov.essenty:state-keeper", version.ref = "essenty" }
 essenty-instance-keeper = { module = "com.arkivanov.essenty:instance-keeper", version.ref = "essenty" }
 essenty-back-handler = { module = "com.arkivanov.essenty:back-handler", version.ref = "essenty" }
+
+# MVI
+orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbit" }
 
 # UI
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }

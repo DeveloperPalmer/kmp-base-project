@@ -3,9 +3,12 @@ package com.urent.feature.app.routing.decompose
 import androidx.compose.runtime.Stable
 import com.arkivanov.decompose.ComponentContext
 import com.urent.core.routing.flow.decompose.FlowNavigationComponent
+import com.urent.core.routing.flow.decompose.Node
+import com.urent.core.routing.flow.decompose.Screen
 import com.urent.feature.app.routing.AppFlowComponent
 import com.urent.feature.app.routing.decompose.AppFlowNavigationComponent.Child
 import com.urent.feature.app.routing.decompose.AppFlowNavigationComponent.Config
+import com.urent.feature.app.ui.screen.main.MainViewModel
 
 @Stable
 class AppFlowNavigationComponent(
@@ -16,7 +19,7 @@ class AppFlowNavigationComponent(
 
   override val childFactory: (Config, ComponentContext) -> Child = { config, _ ->
     when (config) {
-      is Config.Main -> Child.Main
+      is Config.Main -> Child.Main(MainViewModel())
     }
   }
 
@@ -24,7 +27,7 @@ class AppFlowNavigationComponent(
     data object Main : Config
   }
 
-  sealed interface Child {
-    data object Main : Child
+  sealed interface Child : Node {
+    data class Main(override val viewModel: MainViewModel) : Child, Screen
   }
 }
