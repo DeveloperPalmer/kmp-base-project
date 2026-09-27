@@ -11,7 +11,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 abstract class IosAppComponent(
   @get:Provides
   val buildConfiguration: BuildConfiguration,
-) : AppComponent
+) : AppComponent {
+  abstract fun foregroundFactory(): IosForegroundComponent.Factory
+}
 
 @MergeComponent.CreateComponent
 expect fun createIosAppComponent(buildConfiguration: BuildConfiguration): IosAppComponent
