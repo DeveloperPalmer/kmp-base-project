@@ -2,8 +2,8 @@ package com.urent.feature.cities.routing.decompose
 
 import androidx.compose.runtime.Stable
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.stack.pushToFront
 import com.urent.core.routing.flow.decompose.FlowNavigationComponent
+import com.urent.core.routing.flow.decompose.FlowTransition
 import com.urent.core.routing.flow.decompose.Node
 import com.urent.core.routing.flow.decompose.Screen
 import com.urent.core.routing.flow.decompose.viewModel
@@ -22,13 +22,13 @@ class CitiesFlowNavigationComponent(
 ) : FlowNavigationComponent<Config, Child>(context) {
   override fun initialConfig(): List<Config> = listOf(Config.Cities)
 
-  override fun transition(event: Event) {
+  override fun transition(event: Event): FlowTransition<Config> {
     return when (event) {
       is FlowEvent.CityDetailsRequested -> {
-        nav.pushToFront(Config.CityDetails)
+        FlowTransition.NavigateTo(Config.CityDetails)
       }
       else -> {
-        Unit
+        FlowTransition.Ignore
       }
     }
   }
