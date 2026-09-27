@@ -6,7 +6,7 @@ import com.urent.core.ui.mvi.BaseViewModel
 @Immutable
 data class ViewModelProvider(
   val key: String,
-  val factory: () -> BaseViewModel<*, *>,
+  val factory: () -> BaseViewModel<*, *, *>,
 )
 
 // There is no other way to provide empty IntoSet dependencies (in Dagger we have @Multibinds for that),
@@ -21,6 +21,6 @@ data class AssistedViewModelProvider(
   val factory: Factory,
 ) {
   fun interface Factory {
-    fun build(vararg params: Any?): BaseViewModel<*, *>
+    fun build(vararg params: Any?): BaseViewModel<*, *, *>
   }
 }

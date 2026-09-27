@@ -79,17 +79,23 @@ private class TestFlowComponent(
   override fun coroutineScope(): CoroutineScope = error("not used by viewModel()")
 }
 
-private class MainViewModel : BaseViewModel<Unit, Nothing>() {
+private class MainViewModel : BaseViewModel<Unit, Nothing, Nothing>() {
   override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+  override fun dispatch(viewIntent: Nothing) = Unit
 }
 
 private class DetailsViewModel(
   val title: String,
   val id: Int,
-) : BaseViewModel<Unit, Nothing>() {
+) : BaseViewModel<Unit, Nothing, Nothing>() {
   override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+  override fun dispatch(viewIntent: Nothing) = Unit
 }
 
-private class UnknownViewModel : BaseViewModel<Unit, Nothing>() {
+private class UnknownViewModel : BaseViewModel<Unit, Nothing, Nothing>() {
   override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
+
+  override fun dispatch(viewIntent: Nothing) = Unit
 }

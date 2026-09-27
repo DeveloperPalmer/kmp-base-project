@@ -12,9 +12,9 @@ fun AppFlow(component: AppFlowNavigationComponent) {
     stack = component.stack,
     animation = stackAnimation(slide()),
   ) { child ->
-    when (child.instance) {
+    when (val instance = child.instance) {
       is AppFlowNavigationComponent.Child.Home -> {
-        HomeScreen()
+        HomeScreen(viewModel = instance.viewModel)
       }
     }
   }
