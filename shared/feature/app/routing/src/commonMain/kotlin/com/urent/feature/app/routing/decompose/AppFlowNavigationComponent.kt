@@ -8,6 +8,7 @@ import com.urent.core.ui.routing.Event
 import com.urent.feature.app.routing.AppFlowComponent
 import com.urent.feature.app.routing.decompose.AppFlowNavigationComponent.Child
 import com.urent.feature.app.routing.decompose.AppFlowNavigationComponent.Config
+import com.urent.feature.home.routing.decompose.HomeFlowNavigationComponent
 
 @Stable
 class AppFlowNavigationComponent(
@@ -18,10 +19,10 @@ class AppFlowNavigationComponent(
 
   override fun transition(event: Event) = Unit
 
-  override val childFactory: (Config, ComponentContext) -> Child = { config, _ ->
+  override val childFactory: (Config, ComponentContext) -> Child = { config, componentContext ->
     when (config) {
       is Config.Home -> {
-        Child.Home(HomeFlowNavigationComponent(context, component.homeFlowComponent()))
+        Child.Home(HomeFlowNavigationComponent(componentContext, component.homeFlowComponent()))
       }
     }
   }

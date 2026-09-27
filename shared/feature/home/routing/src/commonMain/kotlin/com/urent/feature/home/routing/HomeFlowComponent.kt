@@ -1,32 +1,32 @@
-package com.urent.feature.app.routing
+package com.urent.feature.home.routing
 
 import androidx.compose.runtime.Stable
-import com.urent.core.domain.di.AppFlowScope
 import com.urent.core.routing.di.FlowComponent
 import com.urent.core.ui.viewmodel.AssistedViewModelProvider
 import com.urent.core.ui.viewmodel.ViewModelProvider
 import com.urent.core.ui.viewmodel.emptyAssistedViewModelProvider
 import com.urent.core.ui.viewmodel.emptyViewModelProvider
-import com.urent.feature.home.routing.HomeFlowComponent
+import com.urent.feature.home.domain.di.HomeScope
+import com.urent.feature.hometabs.routing.HomeTabsFlowComponent
 import com.urent.lib.annotation.MergeSubcomponent
 import com.urent.lib.annotation.ScopedViewModel
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 @Stable
-@MergeSubcomponent(AppFlowScope::class)
-interface AppFlowComponent : FlowComponent {
-  fun homeFlowComponent(): HomeFlowComponent
+@MergeSubcomponent(HomeScope::class)
+interface HomeFlowComponent : FlowComponent {
+  fun homeTabsFlowComponent(): HomeTabsFlowComponent
 
   @Provides
   @IntoSet
-  fun emptyAssistedViewModelProviders(): @ScopedViewModel(AppFlowScope::class) AssistedViewModelProvider {
+  fun emptyAssistedViewModelProviders(): @ScopedViewModel(HomeScope::class) AssistedViewModelProvider {
     return emptyAssistedViewModelProvider
   }
 
   @Provides
   @IntoSet
-  fun emptyViewModelProviders(): @ScopedViewModel(AppFlowScope::class) ViewModelProvider {
+  fun emptyViewModelProviders(): @ScopedViewModel(HomeScope::class) ViewModelProvider {
     return emptyViewModelProvider
   }
 }
