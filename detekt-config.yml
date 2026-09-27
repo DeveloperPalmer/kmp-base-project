@@ -90,7 +90,7 @@ style:
   AlsoCouldBeApply:
     active: true
   CascadingCallWrapping:
-    active: true
+    active: false
   DataClassShouldBeImmutable:
     active: true
   DoubleNegativeLambda:

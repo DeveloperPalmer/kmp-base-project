@@ -46,6 +46,7 @@ include(
   ":shared:feature:home-tabs:ui",
   ":shared:feature:home-tabs:routing",
   ":shared:feature:cities:domain",
+  ":shared:feature:cities:data",
   ":shared:feature:cities:ui",
   ":shared:feature:cities:routing",
   ":shared:feature:city-details:domain",

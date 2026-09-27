@@ -7,7 +7,9 @@ import com.urent.core.domain.configuration.BuildConfiguration
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.resources.Resources
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
@@ -25,6 +27,10 @@ interface CoreDataModule {
   ): HttpClient {
     val json = Json { ignoreUnknownKeys = true }
     return provider.create {
+      defaultRequest {
+        url(BASE_URL)
+      }
+      install(Resources)
       install(ContentNegotiation) {
         json(json)
       }
@@ -48,4 +54,5 @@ internal val BuildConfiguration.httpLogLevel: LogLevel
     is BuildConfiguration.Production -> LogLevel.NONE
   }
 
+private const val BASE_URL = "http://dev-dep.tools.urent.tech:8080/api/"
 private const val HTTP_TIMEOUT_MILLIS = 60_000L

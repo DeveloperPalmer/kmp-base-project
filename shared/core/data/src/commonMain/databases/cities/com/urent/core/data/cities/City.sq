@@ -6,3 +6,10 @@ CREATE TABLE City (
   lon REAL NOT NULL,
   pop INTEGER NOT NULL
 );
+
+getCities:
+SELECT id, name, country FROM City;
+
+insert:
+INSERT OR REPLACE INTO City(id, name, country, lat, lon, pop)
+VALUES (?, ?, ?, ?, ?, ?);
