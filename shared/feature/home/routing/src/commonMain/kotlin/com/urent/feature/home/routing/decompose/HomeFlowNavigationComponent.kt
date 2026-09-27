@@ -6,12 +6,13 @@ import com.urent.core.routing.flow.decompose.Flow
 import com.urent.core.routing.flow.decompose.FlowNavigationComponent
 import com.urent.core.routing.flow.decompose.FlowTransition
 import com.urent.core.ui.routing.Event
-import com.urent.feature.cities.ui.routing.FlowEvent
 import com.urent.feature.citydetails.routing.decompose.CityDetailsFlowNavigationComponent
 import com.urent.feature.home.routing.HomeFlowComponent
 import com.urent.feature.home.routing.decompose.HomeFlowNavigationComponent.Child
 import com.urent.feature.home.routing.decompose.HomeFlowNavigationComponent.Config
 import com.urent.feature.hometabs.routing.decompose.HomeTabsFlowNavigationComponent
+import com.urent.feature.cities.ui.routing.FlowEvent as CitiesFlowEvent
+import com.urent.feature.citydetails.ui.routing.FlowEvent as CityDetailsFlowEvent
 
 @Stable
 class HomeFlowNavigationComponent(
@@ -22,8 +23,11 @@ class HomeFlowNavigationComponent(
 
   override fun transition(event: Event): FlowTransition<Config> {
     return when (event) {
-      is FlowEvent.CityDetailsRequested -> {
+      is CitiesFlowEvent.CityDetailsRequested -> {
         FlowTransition.NavigateTo(Config.CityDetails(event.cityId))
+      }
+      is CityDetailsFlowEvent.CityDetailsDismissed -> {
+        FlowTransition.Back
       }
       else -> {
         FlowTransition.Ignore

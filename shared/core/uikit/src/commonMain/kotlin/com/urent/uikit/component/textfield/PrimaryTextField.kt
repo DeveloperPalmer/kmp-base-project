@@ -20,6 +20,7 @@ fun PrimaryTextField(
   onValueChange: (String) -> Unit,
   placeholder: String,
   trailingIcon: DrawableResource,
+  trailingIconDescription: String,
   modifier: Modifier = Modifier,
 ) {
   TextFieldInternal(
@@ -29,6 +30,7 @@ fun PrimaryTextField(
     shape = AppTheme.shapes.regular,
     placeholder = placeholder,
     trailingIcon = trailingIcon,
+    trailingIconDescription = trailingIconDescription,
     colors = TextFieldDefaults.primaryDefaultColors(),
   )
 }
@@ -70,6 +72,7 @@ private fun PrimaryTextFieldPreviewContent(state: TextFieldPreviewState) {
       shape = AppTheme.shapes.regular,
       placeholder = PREVIEW_PLACEHOLDER,
       trailingIcon = Res.drawable.ic_search_24,
+      trailingIconDescription = "search icon",
       colors = TextFieldDefaults.primaryDefaultColors(),
     )
   }
