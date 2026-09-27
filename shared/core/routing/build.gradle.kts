@@ -24,5 +24,5 @@ kotlin {
 dependencies {
   commonMainApi(libs.bundles.decompose)
   commonMainApi(projects.shared.core.ui)
-  commonTestImplementation(libs.kotlin.test)
+  commonTestImplementation(libs.bundles.unit.test)
 }
