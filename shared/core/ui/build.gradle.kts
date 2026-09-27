@@ -5,6 +5,7 @@ plugins {
 kotlin {
   android {
     namespace = "com.kmpbaseproject.core.ui"
+    withHostTest {}
   }
 }
 
@@ -12,4 +13,5 @@ dependencies {
   commonMainApi(projects.shared.core.domain)
   commonMainApi(projects.shared.resources)
   commonMainApi(libs.bundles.orbit)
+  commonTestImplementation(libs.bundles.unit.test)
 }
