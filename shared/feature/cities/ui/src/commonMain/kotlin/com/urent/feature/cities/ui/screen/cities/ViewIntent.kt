@@ -5,5 +5,5 @@ import androidx.compose.runtime.Immutable
 @Immutable
 sealed interface ViewIntent {
   @Immutable
-  data object OpenDetails : ViewIntent
+  data class OpenDetails(val cityId: Long) : ViewIntent
 }

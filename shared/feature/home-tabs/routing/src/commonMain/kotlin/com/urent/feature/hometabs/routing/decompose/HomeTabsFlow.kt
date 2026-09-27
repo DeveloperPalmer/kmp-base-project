@@ -7,8 +7,8 @@ import com.arkivanov.decompose.extensions.compose.pages.ChildPages
 import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.urent.feature.cities.routing.decompose.CitiesFlow
-import com.urent.feature.hometabs.ui.screen.home.HomeScreen
 import com.urent.feature.hometabs.ui.entity.Tab
+import com.urent.feature.hometabs.ui.screen.home.HomeScreen
 import com.urent.feature.map.routing.decompose.MapFlow
 
 @Composable

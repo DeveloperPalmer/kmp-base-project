@@ -1,4 +1,4 @@
-package com.urent.feature.cities.ui.screen.cityDetails
+package com.urent.feature.citydetails.ui.screen.cityDetails
 
 import androidx.compose.runtime.Immutable
 
