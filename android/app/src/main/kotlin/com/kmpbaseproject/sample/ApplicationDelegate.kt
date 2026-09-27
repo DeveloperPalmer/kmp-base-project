@@ -26,7 +26,8 @@ class ApplicationDelegate :
       versionName = BuildConfig.VERSION_NAME,
     )
     return AndroidAppComponent::class.create(
-      buildConfigurationDelegate = buildConfiguration
+      contextDelegate = this,
+      buildConfigurationDelegate = buildConfiguration,
     )
   }
 }
