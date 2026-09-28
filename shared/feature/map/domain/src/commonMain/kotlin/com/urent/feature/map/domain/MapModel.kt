@@ -4,7 +4,8 @@ import com.urent.core.domain.ReactiveModel
 import com.urent.feature.map.domain.di.MapScope
 import com.urent.feature.map.domain.entity.MapCity
 import com.urent.feature.map.domain.entity.MapViewport
-import com.urent.feature.map.domain.function.settledAreas
+import com.urent.feature.map.domain.mapper.accumulated
+import com.urent.feature.map.domain.mapper.settledAreas
 import com.urent.lib.annotation.FlowCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ class MapModel(
         // The last cities stay on the map; a failed area is requested again once the camera moves away.
         .catch { error -> error.printStackTrace() }
     }
+    .accumulated()
     .stateIn(
       scope = scope,
       started = SharingStarted.WhileSubscribed(5000),

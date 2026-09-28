@@ -2,6 +2,8 @@ package com.urent.feature.map.domain.function
 
 import com.urent.feature.map.domain.entity.GeoPoint
 import com.urent.feature.map.domain.entity.MapViewport
+import com.urent.feature.map.domain.mapper.SETTLE_TIMEOUT
+import com.urent.feature.map.domain.mapper.settledAreas
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope

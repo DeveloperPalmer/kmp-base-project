@@ -1,6 +1,7 @@
 package com.urent.feature.map.ui.screen.map.screen.map
 
 import androidx.compose.runtime.Immutable
+import com.urent.feature.map.domain.entity.MapViewport
 
 @Immutable
 sealed interface ViewIntent {
@@ -9,4 +10,7 @@ sealed interface ViewIntent {
 
   @Immutable
   data object ZoomOut : ViewIntent
+
+  @Immutable
+  data class CameraIdle(val viewport: MapViewport) : ViewIntent
 }

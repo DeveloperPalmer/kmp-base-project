@@ -2,6 +2,9 @@ package com.urent.feature.map.domain.function
 
 import com.urent.feature.map.domain.entity.GeoPoint
 import com.urent.feature.map.domain.entity.MapViewport
+import com.urent.feature.map.domain.mapper.distanceMeters
+import com.urent.feature.map.domain.mapper.isSameArea
+import com.urent.feature.map.domain.mapper.viewportAround
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

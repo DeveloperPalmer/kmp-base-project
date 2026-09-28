@@ -17,7 +17,7 @@ import com.urent.feature.map.ui.entity.MapControl
 
 @Composable
 fun MapScreen(viewModel: MapViewModel) {
-  return MviScreen(viewModel) { _, onIntent ->
+  return MviScreen(viewModel) { state, onIntent ->
     val sheetState = rememberMapSheetState()
     val controlsState = rememberMapControlsState(listOf(sheetState))
     Box(
@@ -27,7 +27,9 @@ fun MapScreen(viewModel: MapViewModel) {
     ) {
       Map(
         modifier = Modifier.fillMaxSize(),
+        pins = state.pins,
         actions = sideEffects,
+        onCameraIdle = { viewport -> onIntent(ViewIntent.CameraIdle(viewport)) },
       )
       MapControlsLayer(
         modifier = Modifier.fillMaxSize(),
