@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.plugin.compose")
@@ -18,6 +20,16 @@ android {
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+    val yandexApiKey = providers.environmentVariable("YANDEX_API_KEY")
+      .orElse(
+        providers.fileContents(rootProject.layout.projectDirectory.file("local.properties"))
+          .asText
+          .map { Properties().apply { load(it.reader()) }.getProperty("YANDEX_API_KEY", "") },
+      )
+      .getOrElse("")
+
+    buildConfigField("String", "YANDEX_API_KEY", "\"$yandexApiKey\"")
   }
 
   buildTypes {
@@ -49,6 +61,7 @@ dependencies {
   implementation(projects.shared.feature.app.routing)
 
   implementation(libs.androidx.activity.compose)
+  implementation(libs.yandex.mapkit)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
