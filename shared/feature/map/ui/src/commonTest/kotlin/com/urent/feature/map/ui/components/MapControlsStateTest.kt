@@ -1,7 +1,7 @@
 package com.urent.feature.map.ui.components
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.setValue
 import com.urent.feature.map.ui.entity.MapControl
 import com.urent.feature.map.ui.entity.MapObstacle
@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 class MapControlsStateTest {
   @Test
   fun `stands centered without obstacles`() {
-    val state = controlsState(sheetTop = null)
+    val state = controlsState(sheetTop = Float.POSITIVE_INFINITY)
 
     assertEquals(450f, state.topOf(HEIGHT, VIEWPORT))
     assertTrue(state.isVisible(MapControl.Zoom))
@@ -73,7 +73,7 @@ class MapControlsStateTest {
     assertFalse(state.isVisible(MapControl.Zoom))
   }
 
-  private fun controlsState(sheetTop: Float?): MapControlsState {
+  private fun controlsState(sheetTop: Float): MapControlsState {
     return controlsState(FakeObstacle(sheetTop))
   }
 
@@ -90,8 +90,8 @@ class MapControlsStateTest {
     return apply { onMeasured(MapControl.Zoom, HEIGHT) }
   }
 
-  private class FakeObstacle(top: Float?) : MapObstacle {
-    override var top: Float? by mutableStateOf(top)
+  private class FakeObstacle(top: Float) : MapObstacle {
+    override var top: Float by mutableFloatStateOf(top)
   }
 }
 
