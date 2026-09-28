@@ -7,4 +7,7 @@ import com.urent.feature.hometabs.ui.entity.Tab
 sealed interface ViewIntent {
   @Immutable
   data class SelectTab(val tab: Tab) : ViewIntent
+
+  @Immutable
+  data object NavigateBack : ViewIntent
 }

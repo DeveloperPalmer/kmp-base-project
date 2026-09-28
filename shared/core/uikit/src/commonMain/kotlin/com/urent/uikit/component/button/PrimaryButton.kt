@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.urent.uikit.theme.AppTheme
 
@@ -27,28 +26,22 @@ fun PrimaryButton(
 
 @Preview
 @Composable
-private fun PrimaryButtonPreviewLight(
-  @PreviewParameter(ButtonPreviewStateProvider::class)
-  state: ButtonPreviewState,
-) {
+private fun PrimaryButtonPreviewLight() {
   AppTheme(useDarkTheme = false) {
-    PrimaryButtonPreviewContent(state)
+    PrimaryButtonPreviewContent()
   }
 }
 
 @Preview
 @Composable
-private fun PrimaryButtonPreviewDark(
-  @PreviewParameter(ButtonPreviewStateProvider::class)
-  state: ButtonPreviewState,
-) {
+private fun PrimaryButtonPreviewDark() {
   AppTheme(useDarkTheme = true) {
-    PrimaryButtonPreviewContent(state)
+    PrimaryButtonPreviewContent()
   }
 }
 
 @Composable
-private fun PrimaryButtonPreviewContent(state: ButtonPreviewState) {
+private fun PrimaryButtonPreviewContent() {
   Box(
     modifier = Modifier
       .background(AppTheme.colors.background.primary)
@@ -58,7 +51,6 @@ private fun PrimaryButtonPreviewContent(state: ButtonPreviewState) {
       modifier = Modifier.fillMaxWidth(),
       text = "Поиск информации о городе",
       colors = ButtonDefaults.primaryDefaultColors(),
-      pressed = state.pressed,
       onClick = {},
     )
   }

@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Immutable
 data class ViewState(
-  val citiesSearchQuery: String,
   val cities: Flow<PagingData<City>>,
+  val citiesSearchQuery: String = "",
 )

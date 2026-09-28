@@ -1,7 +1,6 @@
 package com.urent.uikit.component.textfield
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.urent.uikit.modifier.surface
 import com.urent.uikit.theme.AppTheme
-import com.urent.uikit.theme.dropShadow
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import androidx.compose.material3.TextFieldDefaults as TextFieldDefaultsInternal
@@ -41,11 +41,9 @@ internal fun TextFieldInternal(
   trailingIcon: DrawableResource,
   trailingIconDescription: String,
   modifier: Modifier = Modifier,
-  interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-  // Явный фокус нужен только превью: collectIsFocusedAsState и requestFocus работают через
-  // корутины и в статичный рендер не попадают, поле там всегда выглядело бы не в фокусе.
-  focused: Boolean = interactionSource.collectIsFocusedAsState().value,
+  interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
+  val focused = interactionSource.collectIsFocusedAsState().value
   val textColor = colors.textColor(
     focused = focused,
   )
@@ -108,9 +106,12 @@ private fun TextFieldDecoration(
 ) {
   Row(
     modifier = modifier
-      .dropShadow(shadows = shadows, shape = shape)
-      .background(color = containerColor, shape = shape)
-      .border(width = IndicatorWidth, color = indicatorColor, shape = shape)
+      .surface(
+        shape = shape,
+        shadows = shadows,
+        backgroundColor = containerColor,
+        border = BorderStroke(1.5.dp, indicatorColor)
+      )
       .padding(16.dp),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -138,6 +139,7 @@ private fun TextFieldDecoration(
   }
 }
 
+@Immutable
 internal object TextFieldDefaults {
   @Composable
   fun primaryDefaultColors(): TextFieldColors {
@@ -182,8 +184,7 @@ private fun TextFieldColors.trailingIconColor(focused: Boolean): State<Color> {
   return rememberUpdatedState(if (focused) focusedTrailingIconColor else unfocusedTrailingIconColor)
 }
 
-private val IndicatorWidth = 1.5.dp
-
+@Immutable
 internal data class TextFieldPreviewState(
   val label: String,
   val text: String,
@@ -219,5 +220,3 @@ internal class TextFieldPreviewStateProvider : PreviewParameterProvider<TextFiel
     ),
   )
 }
-
-internal const val PREVIEW_PLACEHOLDER = "Введите название города"

@@ -18,7 +18,9 @@ internal data class PinsDiff(
 internal fun pinsDiff(shown: LongObjectMap<*>, pins: List<MapPin>): PinsDiff {
   val added = pins.filterNot { pin -> pin.id in shown }
   // Pins only accumulate, so the gone ones are looked for only when some shown pin is missing
-  if (shown.size + added.size == pins.size) return PinsDiff(added, emptyLongSet())
+  if (shown.size + added.size == pins.size) {
+    return PinsDiff(added, emptyLongSet())
+  }
   val pinIds = MutableLongSet(pins.size)
   pins.forEach { pin -> pinIds += pin.id }
   val removedIds = MutableLongSet()

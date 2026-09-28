@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -23,8 +22,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.urent.core.ui.safeDrawingHorizontal
+import com.urent.uikit.modifier.surface
 import com.urent.uikit.theme.AppTheme
-import com.urent.uikit.theme.dropShadow
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -33,32 +32,30 @@ fun BottomBar(
   modifier: Modifier = Modifier,
   content: @Composable RowScope.() -> Unit,
 ) {
-  Box(
+  Row(
     modifier = modifier
       .fillMaxWidth()
-      .dropShadow(shape = RectangleShape, shadows = AppTheme.shadows.bottomBar)
-      .background(AppTheme.colors.background.primary)
+      .surface(
+        backgroundColor = AppTheme.colors.background.primary,
+        shape = RectangleShape,
+        shadows = AppTheme.shadows.bottomBar,
+      )
       .windowInsetsPadding(WindowInsets.safeDrawingHorizontal)
-      .navigationBarsPadding(),
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .height(64.dp)
-        .padding(horizontal = 8.dp)
-        .selectableGroup(),
-      verticalAlignment = Alignment.CenterVertically,
-      content = content,
-    )
-  }
+      .navigationBarsPadding()
+      .height(64.dp)
+      .padding(horizontal = 8.dp)
+      .selectableGroup(),
+    verticalAlignment = Alignment.CenterVertically,
+    content = content,
+  )
 }
 
 @Composable
 fun RowScope.BottomBarItem(
   selected: Boolean,
-  onClick: () -> Unit,
   icon: DrawableResource,
   contentDescription: String?,
+  onClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   Box(
@@ -74,20 +71,19 @@ fun RowScope.BottomBarItem(
       ),
     contentAlignment = Alignment.Center,
   ) {
-    Box(
+    Icon(
       modifier = Modifier
-        .size(width = 64.dp, height = 32.dp)
         .background(
-          color = if (selected) AppTheme.colors.background.brand else Color.Transparent,
           shape = AppTheme.shapes.circle,
+          color = if (selected) AppTheme.colors.background.brand else Color.Transparent,
+        )
+        .padding(
+          vertical = 4.dp,
+          horizontal = 20.dp
         ),
-      contentAlignment = Alignment.Center,
-    ) {
-      Icon(
-        painter = painterResource(icon),
-        contentDescription = contentDescription,
-        tint = if (selected) AppTheme.colors.icon.primary else AppTheme.colors.icon.secondary,
-      )
-    }
+      painter = painterResource(icon),
+      contentDescription = contentDescription,
+      tint = if (selected) AppTheme.colors.icon.primary else AppTheme.colors.icon.secondary,
+    )
   }
 }

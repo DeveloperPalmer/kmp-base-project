@@ -16,14 +16,18 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.urent.core.ui.mvi.MviScreen
+import com.urent.core.ui.routing.DecomposeBackPressedHandler
 import com.urent.feature.hometabs.ui.entity.Tab
 import com.urent.uikit.component.bottombar.BottomBar
 import com.urent.uikit.component.bottombar.BottomBarItem
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel, selectedTab: Tab, content: @Composable () -> Unit) {
-  MviScreen(viewModel) { _, onIntent ->
+fun HomeScreen(viewModel: HomeViewModel, content: @Composable () -> Unit) {
+  MviScreen(viewModel) { state, onIntent ->
+    DecomposeBackPressedHandler(enabled = state.isBackEnabled) {
+      onIntent(ViewIntent.NavigateBack)
+    }
     val density = LocalDensity.current
     var bottomBarHeight by remember { mutableStateOf(0.dp) }
     Column(modifier = Modifier.fillMaxSize()) {
@@ -42,7 +46,7 @@ fun HomeScreen(viewModel: HomeViewModel, selectedTab: Tab, content: @Composable 
       ) {
         Tab.entries.forEach { tab ->
           BottomBarItem(
-            selected = tab == selectedTab,
+            selected = tab == state.selectedTab,
             onClick = { onIntent(ViewIntent.SelectTab(tab)) },
             icon = tab.icon,
             contentDescription = stringResource(tab.title),

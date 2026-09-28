@@ -3,13 +3,12 @@ package com.urent.feature.cities.ui.screen.cities
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,6 +41,7 @@ import com.urent.uikit.component.button.PrimaryButton
 import com.urent.uikit.component.message.ErrorMessage
 import com.urent.uikit.component.shimmer.ShimmerSpacer
 import com.urent.uikit.component.textfield.PrimaryTextField
+import com.urent.uikit.component.topappbar.TopAppBar
 import com.urent.uikit.theme.AppTheme
 import com.urent.uikit.theme.VSpacer
 import com.urent.uikit.theme.WSpacer
@@ -85,90 +85,68 @@ private fun CitiesReady(
       .background(AppTheme.colors.background.primary)
       .safeDrawingPadding()
   ) {
-    CitiesTopBar()
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-      VSpacer(8.dp)
-      PrimaryTextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = query,
-        onValueChange = { onIntent(ViewIntent.QueryChanged(it)) },
-        placeholder = stringResource(Res.string.cities_search_placeholder),
-        trailingIcon = Res.drawable.ic_search_24,
-        trailingIconDescription = "search icon"
-      )
-      VSpacer(8.dp)
-      LazyColumn(
-        modifier = Modifier.fillMaxSize()
-      ) {
-        if (isLoading) {
-          itemsIndexed(SKELETON_WIDTHS) { index, width ->
-            Skeleton(
-              width = width,
-              showDivider = index > 0
-            )
-          }
-        } else {
-          items(
-            count = cities.itemCount,
-            key = cities.itemKey { it.id }
-          ) { index ->
-            val city = cities[index]
-            if (city != null) {
-              CityItem(
-                city = city,
-                showDivider = index > 0,
+    TopAppBar(
+      title = stringResource(Res.string.cities_list_title)
+    )
+    VSpacer(8.dp)
+    PrimaryTextField(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp),
+      value = query,
+      onValueChange = { onIntent(ViewIntent.QueryChanged(it)) },
+      placeholder = stringResource(Res.string.cities_search_placeholder),
+      trailingIcon = Res.drawable.ic_search_24,
+      trailingIconDescription = "search icon"
+    )
+    VSpacer(8.dp)
+    LazyColumn(
+      modifier = Modifier.fillMaxSize(),
+      contentPadding = PaddingValues(horizontal = 16.dp)
+    ) {
+      if (isLoading) {
+        itemsIndexed(SKELETON_WIDTHS) { index, width ->
+          Skeleton(
+            width = width,
+            showDivider = index > 0
+          )
+        }
+      } else {
+        items(
+          key = cities.itemKey { it.id },
+          count = cities.itemCount
+        ) { index ->
+          val city = cities[index]
+          if (city != null) {
+            City(
+              modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = null,
                 onClick = { onIntent(ViewIntent.OpenDetails(city.id)) }
-              )
-            }
-          }
-          if (cities.loadState.append is LoadState.Loading) {
-            item {
-              Skeleton(
-                width = SKELETON_WIDTHS.first(),
-                showDivider = cities.itemCount > 0
+              ),
+              showDivider = index > 0
+            ) {
+              Text(
+                modifier = Modifier.padding(vertical = 4.dp),
+                text = "${city.name}, ${city.country}",
+                style = AppTheme.typography.body1,
+                color = AppTheme.colors.text.primary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
               )
             }
           }
         }
+        if (cities.loadState.append is LoadState.Loading) {
+          item {
+            Skeleton(
+              width = SKELETON_WIDTHS.first(),
+              showDivider = cities.itemCount > 0
+            )
+          }
+        }
       }
     }
-  }
-}
-
-@Composable
-private fun CitiesTopBar() {
-  Box(
-    modifier = Modifier
-      .fillMaxWidth()
-      .height(52.dp),
-    contentAlignment = Alignment.Center
-  ) {
-    Text(
-      text = stringResource(Res.string.cities_list_title),
-      style = AppTheme.typography.title4,
-      color = AppTheme.colors.text.primary
-    )
-  }
-}
-
-@Composable
-private fun CityItem(
-  city: City,
-  showDivider: Boolean,
-  onClick: () -> Unit,
-) {
-  City(
-    modifier = Modifier.clickable(onClick = onClick),
-    showDivider = showDivider
-  ) {
-    Text(
-      modifier = Modifier.padding(vertical = 4.dp),
-      text = "${city.name}, ${city.country}",
-      style = AppTheme.typography.body1,
-      color = AppTheme.colors.text.primary,
-      maxLines = 1,
-      overflow = TextOverflow.Ellipsis
-    )
   }
 }
 
@@ -230,7 +208,9 @@ private fun CitiesError(
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     WSpacer()
-    ErrorMessage(message = error.message)
+    ErrorMessage(
+      message = error.message
+    )
     WSpacer()
     VSpacer(16.dp)
     PrimaryButton(
