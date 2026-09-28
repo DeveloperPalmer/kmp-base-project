@@ -6,9 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -40,8 +39,7 @@ fun CityDetailsScreen(viewModel: CityDetailsViewModel) {
       modifier = Modifier
         .fillMaxSize()
         .background(AppTheme.colors.background.primary)
-        .statusBarsPadding()
-        .navigationBarsPadding()
+        .safeDrawingPadding()
     ) {
       CityDetailsTopBar(
         onBack = { onIntent(ViewIntent.NavigateBack) }

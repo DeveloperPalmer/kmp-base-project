@@ -10,9 +10,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
@@ -84,6 +83,7 @@ private fun CitiesReady(
     modifier = Modifier
       .fillMaxSize()
       .background(AppTheme.colors.background.primary)
+      .safeDrawingPadding()
   ) {
     CitiesTopBar()
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -98,9 +98,7 @@ private fun CitiesReady(
       )
       VSpacer(8.dp)
       LazyColumn(
-        modifier = Modifier
-          .fillMaxSize()
-          .imePadding()
+        modifier = Modifier.fillMaxSize()
       ) {
         if (isLoading) {
           itemsIndexed(SKELETON_WIDTHS) { index, width ->
@@ -142,7 +140,6 @@ private fun CitiesTopBar() {
   Box(
     modifier = Modifier
       .fillMaxWidth()
-      .statusBarsPadding()
       .height(52.dp),
     contentAlignment = Alignment.Center
   ) {
@@ -228,7 +225,7 @@ private fun CitiesError(
     modifier = Modifier
       .fillMaxSize()
       .background(AppTheme.colors.background.primary)
-      .statusBarsPadding()
+      .safeDrawingPadding()
       .padding(horizontal = 16.dp),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
