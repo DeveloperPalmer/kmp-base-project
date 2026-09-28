@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
@@ -20,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.urent.core.ui.safeDrawingHorizontal
 import com.urent.uikit.theme.AppTheme
 import com.urent.uikit.theme.dropShadow
 import org.jetbrains.compose.resources.DrawableResource
@@ -35,6 +38,7 @@ fun BottomBar(
       .fillMaxWidth()
       .dropShadow(shape = RectangleShape, shadows = AppTheme.shadows.bottomBar)
       .background(AppTheme.colors.background.primary)
+      .windowInsetsPadding(WindowInsets.safeDrawingHorizontal)
       .navigationBarsPadding(),
   ) {
     Row(
