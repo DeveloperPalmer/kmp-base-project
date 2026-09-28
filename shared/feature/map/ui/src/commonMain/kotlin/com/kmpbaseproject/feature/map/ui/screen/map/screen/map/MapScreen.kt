@@ -32,6 +32,7 @@ fun MapScreen(viewModel: MapViewModel) {
       Map(
         modifier = Modifier.fillMaxSize(),
         pins = state.pins,
+        selectedPinId = state.city?.id,
         actions = sideEffects,
         onPinClick = { cityId -> onIntent(ViewIntent.SelectCity(cityId)) },
         onCameraIdle = { viewport -> onIntent(ViewIntent.CameraIdle(viewport)) },

@@ -48,6 +48,7 @@ internal fun rememberPinImages(): PinImages {
   val fontFamilyResolver = LocalFontFamilyResolver.current
   val style = PinStyle(
     background = AppTheme.colors.pins.primaryBackground,
+    selectedBackground = AppTheme.colors.accent.brand,
     foreground = AppTheme.colors.pins.foreground,
     stroke = AppTheme.colors.pins.stroke,
     text = AppTheme.typography.label,
@@ -61,6 +62,7 @@ internal fun rememberPinImages(): PinImages {
 @Immutable
 internal data class PinStyle(
   val background: Color,
+  val selectedBackground: Color,
   val foreground: Color,
   val stroke: Color,
   val text: TextStyle,
@@ -111,8 +113,13 @@ internal class PinImages(
     IconStyle().setAnchor(PointF(0.5f, tipY / pinHeight))
   }
 
-  fun pin(title: String): ImageProvider {
-    return BubbleImage(id = "map_pin_${styleKey}_$title", text = title, tail = true)
+  fun pin(title: String, selected: Boolean): ImageProvider {
+    return BubbleImage(
+      id = "map_${if (selected) "selected_pin" else "pin"}_${styleKey}_$title",
+      text = title,
+      tail = true,
+      background = if (selected) style.selectedBackground else style.background,
+    )
   }
 
   // MapKit reports every cluster anew on each zoom step, so one image per size is enough
@@ -120,13 +127,14 @@ internal class PinImages(
     return clusters[size] ?: BubbleImage(
       id = "map_cluster_${styleKey}_$size",
       text = size.toString(),
-      tail = false
+      tail = false,
+      background = style.background,
     ).also { image -> clusters.put(size, image) }
   }
 
   // MapKit may ask for images off the main thread, and the text measurer is shared
   @Synchronized
-  private fun drawBubble(text: String, tail: Boolean): ImageBitmap = with(density) {
+  private fun drawBubble(text: String, tail: Boolean, background: Color): ImageBitmap = with(density) {
     val layout = textMeasurer.measure(text = text, style = style.text, maxLines = 1, softWrap = false)
     val height = PIN_HEIGHT.toPx()
     val strokeWidth = STROKE_WIDTH.toPx()
@@ -170,7 +178,7 @@ internal class PinImages(
       )
       // The fill covers the inner half of the stroke, so the stroke lies outside the fill as in the design
       drawPath(outline, style.stroke, style = Stroke(2 * strokeWidth))
-      drawPath(outline, style.background)
+      drawPath(outline, background)
       drawText(
         textLayoutResult = layout,
         color = style.foreground,
@@ -274,10 +282,11 @@ internal class PinImages(
     private val id: String,
     private val text: String,
     private val tail: Boolean,
+    private val background: Color,
   ) : ImageProvider() {
     override fun getId(): String = id
 
-    override fun getImage(): Bitmap = drawBubble(text, tail).asAndroidBitmap()
+    override fun getImage(): Bitmap = drawBubble(text, tail, background).asAndroidBitmap()
   }
 }
 

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 internal expect fun Map(
   pins: List<MapPin>,
+  selectedPinId: Long?,
   actions: Flow<MapAction>,
   onCameraIdle: (MapViewport) -> Unit,
   onPinClick: (Long) -> Unit,

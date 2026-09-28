@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 internal actual fun Map(
   pins: List<MapPin>,
+  selectedPinId: Long?,
   actions: Flow<MapAction>,
   onCameraIdle: (MapViewport) -> Unit,
   onPinClick: (Long) -> Unit,
@@ -64,7 +65,7 @@ internal actual fun Map(
   }
 
   MapViewportEffect(mapView, onCameraIdle)
-  MapPinsEffect(mapView, pins, onPinClick)
+  MapPinsEffect(mapView, pins, selectedPinId, onPinClick)
   MapLogoEffect(mapView)
 
   AndroidView(

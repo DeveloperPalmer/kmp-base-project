@@ -36,6 +36,7 @@ internal class MapPinsLayer(
   private val pinTapListener = WeakReference<MapObjectTapListener>(this)
   private val collection = map.mapObjects.addClusterizedPlacemarkCollection(WeakReference(this))
   private val placemarks = MutableLongObjectMap<PlacemarkMapObject>()
+  private var selectedId: Long? = null
 
   init {
     // A collection hears the taps on all of its placemarks
@@ -49,12 +50,23 @@ internal class MapPinsLayer(
       placemarks.remove(id)?.let(collection::remove)
     }
     diff.added.forEach { pin ->
-      val placemark = collection.addPlacemark(pin.location.toPoint(), images.pin(pin.title), images.pinIconStyle)
-      placemark.userData = pin.id
+      val placemark = collection.addPlacemark(
+        pin.location.toPoint(),
+        images.pin(pin.title, selected = pin.id == selectedId),
+        images.pinIconStyle
+      )
+      placemark.userData = pin
       placemarks[pin.id] = placemark
     }
     // Placemarks appear only once clustered, and every change of the collection needs clustering again
     collection.clusterPlacemarks(CLUSTER_RADIUS, CLUSTER_MIN_ZOOM)
+  }
+
+  fun select(id: Long?) {
+    if (id == selectedId) return
+    selectedId?.let { previous -> placemarks[previous]?.showPin(selected = false) }
+    selectedId = id
+    id?.let { current -> placemarks[current]?.showPin(selected = true) }
   }
 
   fun clear() {
@@ -82,9 +94,14 @@ internal class MapPinsLayer(
   }
 
   override fun onMapObjectTap(mapObject: MapObject, point: Point): Boolean {
-    val id = mapObject.userData as? Long ?: return false
-    onPinClick(id)
+    val pin = mapObject.userData as? MapPin ?: return false
+    onPinClick(pin.id)
     return true
+  }
+
+  private fun PlacemarkMapObject.showPin(selected: Boolean) {
+    val pin = userData as? MapPin ?: return
+    setIcon(images.pin(pin.title, selected), images.pinIconStyle)
   }
 }
 
