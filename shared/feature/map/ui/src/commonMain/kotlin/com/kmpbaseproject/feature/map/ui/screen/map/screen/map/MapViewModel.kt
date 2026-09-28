@@ -5,7 +5,7 @@ import com.kmpbaseproject.feature.map.domain.MapModel
 import com.kmpbaseproject.feature.map.domain.di.MapScope
 import com.kmpbaseproject.feature.map.ui.adapter.MapAdapter
 import com.kmpbaseproject.feature.map.ui.entity.MapAction
-import com.kmpbaseproject.feature.map.ui.mapper.toMapPin
+import com.kmpbaseproject.feature.map.ui.mapper.toMapPins
 import com.kmpbaseproject.lib.annotation.ViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class MapViewModel(
       }
       launch {
         mapModel.cities.collect { cities ->
-          reduce { state.copy(pins = cities.map { city -> city.toMapPin() }) }
+          reduce { state.copy(pins = cities.toMapPins(mapped = state.pins)) }
         }
       }
     }

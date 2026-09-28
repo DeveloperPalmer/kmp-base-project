@@ -11,5 +11,6 @@ kotlin {
 
 dependencies {
   commonMainApi(projects.shared.core.domain)
+  commonMainImplementation(libs.androidx.collection)
   commonTestImplementation(libs.bundles.unit.test)
 }

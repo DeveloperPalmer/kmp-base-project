@@ -6,11 +6,22 @@ import com.kmpbaseproject.core.domain.entity.LceState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import ru.kode.remo.JobFlow
 import ru.kode.remo.JobState
 import ru.kode.remo.StartScheduled
 import ru.kode.remo.Task3
+
+fun <T, S> Flow<T>.mapDistinctChanges(transform: suspend (T) -> S): Flow<S> {
+  return this.map(transform).distinctUntilChanged()
+}
+
+fun <T, S : Any> Flow<T>.mapDistinctNotNullChanges(transform: suspend (T) -> S?): Flow<S> {
+  return this.mapNotNull(transform).distinctUntilChanged()
+}
 
 fun <T> JobFlow<T>.asLceState(): Flow<LceState<Unit>> {
   return channelFlow {
