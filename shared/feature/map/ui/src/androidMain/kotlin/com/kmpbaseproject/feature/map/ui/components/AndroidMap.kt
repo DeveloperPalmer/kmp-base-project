@@ -10,7 +10,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.kmpbaseproject.feature.map.domain.entity.MapViewport
 import com.kmpbaseproject.feature.map.ui.entity.MapAction
+import com.kmpbaseproject.feature.map.ui.entity.MapPin
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -20,7 +22,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 internal actual fun Map(
+  pins: List<MapPin>,
   actions: Flow<MapAction>,
+  onCameraIdle: (MapViewport) -> Unit,
   modifier: Modifier,
 ) {
   val context = LocalContext.current
@@ -57,6 +61,9 @@ internal actual fun Map(
       }
     }
   }
+
+  MapViewportEffect(mapView, onCameraIdle)
+  MapPinsEffect(mapView, pins)
 
   AndroidView(
     modifier = modifier,

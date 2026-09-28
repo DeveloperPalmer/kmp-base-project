@@ -2,6 +2,9 @@ package com.kmpbaseproject.feature.map.domain.function
 
 import com.kmpbaseproject.feature.map.domain.entity.GeoPoint
 import com.kmpbaseproject.feature.map.domain.entity.MapViewport
+import com.kmpbaseproject.feature.map.domain.mapper.distanceMeters
+import com.kmpbaseproject.feature.map.domain.mapper.isSameArea
+import com.kmpbaseproject.feature.map.domain.mapper.viewportAround
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

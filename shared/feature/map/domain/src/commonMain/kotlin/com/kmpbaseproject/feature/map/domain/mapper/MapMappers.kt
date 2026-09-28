@@ -1,7 +1,14 @@
-package com.kmpbaseproject.feature.map.domain.function
+package com.kmpbaseproject.feature.map.domain.mapper
 
 import com.kmpbaseproject.feature.map.domain.entity.GeoPoint
+import com.kmpbaseproject.feature.map.domain.entity.MapCity
 import com.kmpbaseproject.feature.map.domain.entity.MapViewport
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.runningReduce
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.asin
@@ -9,6 +16,25 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.time.Duration.Companion.milliseconds
+
+/**
+ * Every city loaded so far: a city once shown stays on the map, and a response with no new
+ * cities emits nothing, so the map is not rebuilt each time the camera stops.
+ */
+fun Flow<List<MapCity>>.accumulated(): Flow<List<MapCity>> {
+  return map { loaded -> loaded.associateBy { city -> city.id } }
+    .runningReduce { known, loaded -> if (known.keys.containsAll(loaded.keys)) known else known + loaded }
+    .distinctUntilChanged()
+    .map { known -> known.values.toList() }
+}
+
+/** Areas worth a request: the camera has stayed still for a moment and moved to a different area. */
+@OptIn(FlowPreview::class)
+fun Flow<MapViewport>.settledAreas(): Flow<MapViewport> {
+  return debounce(SETTLE_TIMEOUT)
+    .distinctUntilChanged { old, new -> old.isSameArea(new) }
+}
 
 /** Great-circle distance by the haversine formula. */
 fun distanceMeters(from: GeoPoint, to: GeoPoint): Double {
@@ -44,3 +70,4 @@ private fun Double.toRadians(): Double = this * PI / 180
 
 private const val EARTH_RADIUS_METERS = 6_371_000.0
 private const val SAME_AREA_TOLERANCE = 0.1
+internal val SETTLE_TIMEOUT = 300.milliseconds

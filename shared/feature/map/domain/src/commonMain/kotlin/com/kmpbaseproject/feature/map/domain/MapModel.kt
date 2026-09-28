@@ -4,7 +4,8 @@ import com.kmpbaseproject.core.domain.ReactiveModel
 import com.kmpbaseproject.feature.map.domain.di.MapScope
 import com.kmpbaseproject.feature.map.domain.entity.MapCity
 import com.kmpbaseproject.feature.map.domain.entity.MapViewport
-import com.kmpbaseproject.feature.map.domain.function.settledAreas
+import com.kmpbaseproject.feature.map.domain.mapper.accumulated
+import com.kmpbaseproject.feature.map.domain.mapper.settledAreas
 import com.kmpbaseproject.lib.annotation.FlowCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ class MapModel(
         // The last cities stay on the map; a failed area is requested again once the camera moves away.
         .catch { error -> error.printStackTrace() }
     }
+    .accumulated()
     .stateIn(
       scope = scope,
       started = SharingStarted.WhileSubscribed(5000),
