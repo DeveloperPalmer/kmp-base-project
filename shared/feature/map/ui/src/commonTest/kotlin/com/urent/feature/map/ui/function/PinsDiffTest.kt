@@ -1,5 +1,9 @@
 package com.urent.feature.map.ui.function
 
+import androidx.collection.LongObjectMap
+import androidx.collection.MutableLongObjectMap
+import androidx.collection.emptyLongSet
+import androidx.collection.longSetOf
 import com.urent.feature.map.domain.entity.GeoPoint
 import com.urent.feature.map.ui.entity.MapPin
 import kotlin.test.Test
@@ -9,33 +13,47 @@ import kotlin.test.assertTrue
 class PinsDiffTest {
   @Test
   fun `adds every pin to an empty map`() {
-    val diff = pinsDiff(shownIds = emptySet(), pins = listOf(MOSCOW, KHIMKI))
+    val diff = pinsDiff(shown = shown(), pins = listOf(MOSCOW, KHIMKI))
 
     assertEquals(listOf(MOSCOW, KHIMKI), diff.added)
-    assertEquals(emptySet(), diff.removedIds)
+    assertEquals(emptyLongSet(), diff.removedIds)
   }
 
   @Test
   fun `adds only new pins and leaves shown ones as they are`() {
-    val diff = pinsDiff(shownIds = setOf(MOSCOW.id), pins = listOf(MOSCOW, KHIMKI))
+    val diff = pinsDiff(shown = shown(MOSCOW), pins = listOf(MOSCOW, KHIMKI))
 
     assertEquals(listOf(KHIMKI), diff.added)
-    assertEquals(emptySet(), diff.removedIds)
+    assertEquals(emptyLongSet(), diff.removedIds)
   }
 
   @Test
   fun `removes pins that are gone`() {
-    val diff = pinsDiff(shownIds = setOf(MOSCOW.id, KHIMKI.id), pins = listOf(KHIMKI))
+    val diff = pinsDiff(shown = shown(MOSCOW, KHIMKI), pins = listOf(KHIMKI))
 
     assertEquals(emptyList(), diff.added)
-    assertEquals(setOf(MOSCOW.id), diff.removedIds)
+    assertEquals(longSetOf(MOSCOW.id), diff.removedIds)
+  }
+
+  @Test
+  fun `replaces a gone pin with a new one`() {
+    val diff = pinsDiff(shown = shown(MOSCOW), pins = listOf(KHIMKI))
+
+    assertEquals(listOf(KHIMKI), diff.added)
+    assertEquals(longSetOf(MOSCOW.id), diff.removedIds)
   }
 
   @Test
   fun `changes nothing for the same pins`() {
-    val diff = pinsDiff(shownIds = setOf(MOSCOW.id, KHIMKI.id), pins = listOf(MOSCOW, KHIMKI))
+    val diff = pinsDiff(shown = shown(MOSCOW, KHIMKI), pins = listOf(MOSCOW, KHIMKI))
 
     assertTrue(diff.isEmpty)
+  }
+
+  private fun shown(vararg pins: MapPin): LongObjectMap<MapPin> {
+    return MutableLongObjectMap<MapPin>().apply {
+      pins.forEach { pin -> set(pin.id, pin) }
+    }
   }
 }
 
