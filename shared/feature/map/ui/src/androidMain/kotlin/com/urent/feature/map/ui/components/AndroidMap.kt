@@ -1,7 +1,8 @@
-package com.urent.feature.map.ui.screen.map
+package com.urent.feature.map.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -9,13 +10,19 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.urent.feature.map.ui.entity.MapAction
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-internal actual fun Map(modifier: Modifier) {
+internal actual fun Map(
+  actions: Flow<MapAction>,
+  modifier: Modifier,
+) {
   val context = LocalContext.current
   val lifecycle = LocalLifecycleOwner.current.lifecycle
   val mapView = remember {
@@ -42,6 +49,15 @@ internal actual fun Map(modifier: Modifier) {
     }
   }
 
+  LaunchedEffect(actions, mapView) {
+    actions.collect { action ->
+      when (action) {
+        is MapAction.ZoomIn -> mapView.zoomBy(1f)
+        is MapAction.ZoomOut -> mapView.zoomBy(-1f)
+      }
+    }
+  }
+
   AndroidView(
     modifier = modifier,
     factory = { mapView },
@@ -58,5 +74,15 @@ private fun MapView.stop() {
   MapKitFactory.getInstance().onStop()
 }
 
+private fun MapView.zoomBy(delta: Float) {
+  val map = mapWindow.map
+  val position = map.cameraPosition
+  map.move(
+    CameraPosition(position.target, position.zoom + delta, position.azimuth, position.tilt),
+    Animation(Animation.Type.SMOOTH, ZOOM_ANIMATION_DURATION),
+  )
+}
+
 private const val DEFAULT_ZOOM = 11f
+private const val ZOOM_ANIMATION_DURATION = 0.3f
 private val DEFAULT_LOCATION = Point(55.750447, 37.617495)

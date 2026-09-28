@@ -14,5 +14,7 @@
   <string name="error_no_connection_description">Check your connection and try again. Data won’t load without the internet</string>
   <string name="error_no_connection_title">No internet connection</string>
   <string name="map_screen_title">Map</string>
+  <string name="map_zoom_in">Zoom in</string>
+  <string name="map_zoom_out">Zoom out</string>
   <string name="retry">Try again</string>
 </resources>
