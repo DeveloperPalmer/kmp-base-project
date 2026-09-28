@@ -13,4 +13,13 @@ sealed interface ViewIntent {
 
   @Immutable
   data class CameraIdle(val viewport: MapViewport) : ViewIntent
+
+  @Immutable
+  data class SelectCity(val cityId: Long) : ViewIntent
+
+  @Immutable
+  data object DismissCity : ViewIntent
+
+  @Immutable
+  data object SearchCityInfo : ViewIntent
 }

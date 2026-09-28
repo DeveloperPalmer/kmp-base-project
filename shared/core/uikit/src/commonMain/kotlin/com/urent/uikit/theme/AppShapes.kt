@@ -12,6 +12,7 @@ data class AppShapes(
   val small: Shape = RoundedCornerShape(12.dp),
   val regular: Shape = RoundedCornerShape(16.dp),
   val semiMedium: Shape = RoundedCornerShape(20.dp),
+  val sheet: Shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
   val circle: Shape = CircleShape
 )
 

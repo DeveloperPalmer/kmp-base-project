@@ -1,19 +1,23 @@
 package com.urent.feature.map.domain
 
 import com.urent.core.domain.ReactiveModel
+import com.urent.core.domain.mapDistinctChanges
 import com.urent.core.domain.mapDistinctNotNullChanges
 import com.urent.feature.map.domain.di.MapScope
 import com.urent.feature.map.domain.entity.MapCity
+import com.urent.feature.map.domain.entity.MapCityDetails
 import com.urent.feature.map.domain.entity.MapViewport
 import com.urent.feature.map.domain.mapper.settledAreas
 import com.urent.lib.annotation.FlowCoroutineScope
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -48,12 +52,25 @@ class MapModel(
       initialValue = emptyList()
     )
 
+  val selectedCity: Flow<MapCityDetails?> = stateFlow
+    .mapDistinctChanges { it.selectedCityId }
+    .flatMapLatest { id -> if (id == null) flowOf(null) else mapRepository.cityDetails(id) }
+
   fun changeViewport(viewport: MapViewport) {
     stateFlow.update { it.copy(viewport = viewport) }
+  }
+
+  fun selectCity(id: Long) {
+    stateFlow.update { it.copy(selectedCityId = id) }
+  }
+
+  fun deselectCity() {
+    stateFlow.update { it.copy(selectedCityId = null) }
   }
 }
 
 private data class State(
   val viewport: MapViewport? = null,
+  val selectedCityId: Long? = null,
   val loadedCities: LoadedCities = LoadedCities()
 )
