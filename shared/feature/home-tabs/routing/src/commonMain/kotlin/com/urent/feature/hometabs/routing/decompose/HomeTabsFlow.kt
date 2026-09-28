@@ -27,6 +27,7 @@ fun HomeTabsFlow(component: HomeTabsFlowNavigationComponent) {
           state = state,
           modifier = modifier,
           userScrollEnabled = false,
+          beyondViewportPageCount = 1,
           key = key,
           pageContent = pageContent,
         )

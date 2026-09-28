@@ -6,6 +6,12 @@ kotlin {
   android {
     namespace = "com.urent.feature.map.ui"
   }
+
+  sourceSets {
+    androidMain.dependencies {
+      implementation(libs.yandex.mapkit)
+    }
+  }
 }
 
 dependencies {
