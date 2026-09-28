@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kmpbaseproject.core.ui.formatPopulation
 import com.kmpbaseproject.core.ui.mvi.MviScreen
 import com.kmpbaseproject.feature.citydetails.domain.entity.CityDetails
 import com.kmpbaseproject.resources.Res
@@ -26,6 +26,7 @@ import com.kmpbaseproject.resources.city_details_population_value
 import com.kmpbaseproject.resources.city_details_search
 import com.kmpbaseproject.resources.ic_arrow_back_24
 import com.kmpbaseproject.uikit.component.button.PrimaryButton
+import com.kmpbaseproject.uikit.component.info.InfoItem
 import com.kmpbaseproject.uikit.theme.AppTheme
 import com.kmpbaseproject.uikit.theme.VSpacer
 import com.kmpbaseproject.uikit.theme.WSpacer
@@ -97,29 +98,6 @@ private fun CityInfo(city: CityDetails) {
     InfoItem(
       label = stringResource(Res.string.city_details_population),
       value = stringResource(Res.string.city_details_population_value, formatPopulation(city.population))
-    )
-  }
-}
-
-@Composable
-private fun InfoItem(
-  label: String,
-  value: String,
-) {
-  Column(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(vertical = 11.dp)
-  ) {
-    Text(
-      text = label,
-      style = AppTheme.typography.subtitle1,
-      color = AppTheme.colors.text.primary
-    )
-    Text(
-      text = value,
-      style = AppTheme.typography.body1,
-      color = AppTheme.colors.text.primary
     )
   }
 }
