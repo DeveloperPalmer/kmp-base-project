@@ -11,7 +11,7 @@ import com.kmpbaseproject.core.ui.routing.Event
 import com.kmpbaseproject.feature.map.routing.MapFlowComponent
 import com.kmpbaseproject.feature.map.routing.decompose.MapFlowNavigationComponent.Child
 import com.kmpbaseproject.feature.map.routing.decompose.MapFlowNavigationComponent.Config
-import com.kmpbaseproject.feature.map.ui.screen.map.MapViewModel
+import com.kmpbaseproject.feature.map.ui.screen.map.screen.map.MapViewModel
 
 @Stable
 class MapFlowNavigationComponent(

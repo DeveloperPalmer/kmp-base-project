@@ -1,0 +1,21 @@
+package com.kmpbaseproject.feature.map.ui.components
+
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
+import com.kmpbaseproject.feature.map.ui.entity.MapObstacle
+import com.kmpbaseproject.feature.map.ui.entity.MapSheetValue
+
+@Composable
+internal fun rememberMapSheetState(): MapSheetState {
+  return remember { MapSheetState() }
+}
+
+@Stable
+internal class MapSheetState : MapObstacle {
+  val draggable = AnchoredDraggableState(MapSheetValue.Collapsed)
+
+  override val top: Float?
+    get() = draggable.offset.takeUnless(Float::isNaN)
+}
