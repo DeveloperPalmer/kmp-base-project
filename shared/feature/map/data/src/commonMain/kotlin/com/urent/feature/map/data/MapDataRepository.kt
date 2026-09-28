@@ -65,7 +65,14 @@ class MapDataRepository(
     return citiesDatabase.cityQueries
       .getCity(
         id = id,
-        mapper = ::MapCityDetails
+        mapper = { name, country, pop ->
+          MapCityDetails(
+            id = id,
+            name = name,
+            country = country,
+            population = pop
+          )
+        }
       )
       .asFlow()
       .mapToOneNotNull(Dispatchers.IO)
