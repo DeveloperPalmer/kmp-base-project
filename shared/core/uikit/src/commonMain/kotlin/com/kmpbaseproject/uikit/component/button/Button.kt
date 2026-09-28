@@ -1,7 +1,5 @@
 package com.kmpbaseproject.uikit.component.button
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
@@ -18,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.kmpbaseproject.uikit.modifier.surface
 import com.kmpbaseproject.uikit.theme.AppTheme
 
 @Composable
@@ -29,21 +27,18 @@ internal fun ButtonInternal(
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
   interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-  // Явное нажатие нужно только превью: collectIsPressedAsState работает через корутину
-  // и в статичный рендер не попадает, кнопка там всегда выглядела бы не нажатой.
-  pressed: Boolean = interactionSource.collectIsPressedAsState().value,
 ) {
   val containerColor = colors.containerColor(
-    pressed = pressed,
+    pressed = interactionSource.collectIsPressedAsState().value,
   )
   Box(
     modifier = modifier
-      .heightIn(min = ButtonHeight)
-      .background(color = containerColor.value, shape = AppTheme.shapes.regular)
-      .clickable(
-        interactionSource = interactionSource,
-        indication = null,
+      .heightIn(56.dp)
+      .surface(
         role = Role.Button,
+        shape = AppTheme.shapes.regular,
+        backgroundColor = { containerColor.value },
+        interactionSource = interactionSource,
         onClick = onClick,
       ),
     contentAlignment = Alignment.Center,
@@ -51,22 +46,22 @@ internal fun ButtonInternal(
     Text(
       modifier = Modifier.padding(horizontal = 24.dp),
       text = text,
-      style = AppTheme.typography.title4,
       color = colors.contentColor,
+      style = AppTheme.typography.title4,
       maxLines = 1,
       overflow = TextOverflow.Ellipsis,
     )
   }
 }
 
-// Material3 ButtonColors не умеет цвет нажатия, а в Figma Pressed отличается именно фоном.
 @Immutable
 internal data class ButtonColors(
+  val contentColor: Color,
   val containerColor: Color,
   val pressedContainerColor: Color,
-  val contentColor: Color,
 )
 
+@Immutable
 internal object ButtonDefaults {
   @Composable
   fun primaryDefaultColors(): ButtonColors {
@@ -81,24 +76,4 @@ internal object ButtonDefaults {
 @Composable
 private fun ButtonColors.containerColor(pressed: Boolean): State<Color> {
   return rememberUpdatedState(if (pressed) pressedContainerColor else containerColor)
-}
-
-private val ButtonHeight = 56.dp
-
-internal data class ButtonPreviewState(
-  val label: String,
-  val pressed: Boolean,
-)
-
-internal class ButtonPreviewStateProvider : PreviewParameterProvider<ButtonPreviewState> {
-  override val values = sequenceOf(
-    ButtonPreviewState(
-      label = "default",
-      pressed = false,
-    ),
-    ButtonPreviewState(
-      label = "pressed",
-      pressed = true,
-    ),
-  )
 }

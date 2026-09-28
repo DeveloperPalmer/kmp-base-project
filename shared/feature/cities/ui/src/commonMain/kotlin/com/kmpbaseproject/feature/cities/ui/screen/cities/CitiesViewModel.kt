@@ -13,17 +13,12 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Inject
 @ViewModel(CitiesScope::class)
-class CitiesViewModel(
-  citiesModel: CitiesModel,
-) : BaseViewModel<ViewState, ViewIntent, Nothing>() {
+class CitiesViewModel(citiesModel: CitiesModel) : BaseViewModel<ViewState, ViewIntent, Nothing>() {
   override val container = viewModelScope.orbitContainer<ViewState, Nothing>(
-    ViewState(
-      citiesSearchQuery = "",
-      cities = citiesModel.cities
-    )
+    ViewState(cities = citiesModel.cities)
   ) {
     intents<ViewIntent.QueryChanged>()
-      .debounce(SEARCH_DEBOUNCE_MILLIS)
+      .debounce(300.milliseconds)
       .collect { intent -> citiesModel.search(intent.query) }
   }
 
@@ -38,5 +33,3 @@ class CitiesViewModel(
     }
   }
 }
-
-private val SEARCH_DEBOUNCE_MILLIS = 200L.milliseconds

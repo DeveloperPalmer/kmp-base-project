@@ -9,6 +9,7 @@ import com.arkivanov.decompose.router.pages.childPages
 import com.arkivanov.decompose.router.pages.navigate
 import com.arkivanov.decompose.router.pages.select
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.kmpbaseproject.core.routing.flow.decompose.Flow
 import com.kmpbaseproject.core.routing.flow.decompose.FlowNode
@@ -32,7 +33,7 @@ import kotlinx.coroutines.launch
 class HomeTabsFlowNavigationComponent(
   context: ComponentContext,
   val component: HomeTabsFlowComponent,
-) : FlowNode<Config>() {
+) : FlowNode<Config>(), BackHandlerOwner by context {
   private val eventScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
   private val pagesNavigation = PagesNavigation<Config>()
 
@@ -41,7 +42,6 @@ class HomeTabsFlowNavigationComponent(
   val pages: Value<ChildPages<Config, Child>> = context.childPages(
     source = pagesNavigation,
     serializer = null,
-    handleBackButton = true,
     childFactory = ::child,
     initialPages = {
       Pages(

@@ -18,8 +18,8 @@ import org.orbitmvi.orbit.syntax.Syntax
 @Inject
 @ViewModel(MapScope::class)
 class MapViewModel(
-  private val mapAdapter: MapAdapter,
   private val mapModel: MapModel,
+  private val mapAdapter: MapAdapter,
 ) : BaseViewModel<ViewState, ViewIntent, MapAction>() {
   override val container = viewModelScope.orbitContainer(ViewState()) {
     coroutineScope {
