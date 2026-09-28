@@ -13,6 +13,7 @@ import com.yandex.mapkit.mapview.MapView
 internal fun MapPinsEffect(
   mapView: MapView,
   pins: List<MapPin>,
+  selectedPinId: Long?,
   onPinClick: (Long) -> Unit
 ) {
   val images = rememberPinImages()
@@ -25,5 +26,8 @@ internal fun MapPinsEffect(
   }
   LaunchedEffect(layer, pins) {
     layer.show(pins)
+  }
+  LaunchedEffect(layer, selectedPinId) {
+    layer.select(selectedPinId)
   }
 }
