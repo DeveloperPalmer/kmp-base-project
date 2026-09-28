@@ -1,5 +1,6 @@
 package com.urent.feature.map.ui.components
 
+import androidx.collection.MutableLongObjectMap
 import androidx.compose.runtime.Stable
 import com.urent.feature.map.ui.entity.MapPin
 import com.urent.feature.map.ui.function.pinsDiff
@@ -30,10 +31,10 @@ internal class MapPinsLayer(
 ) : ClusterListener, ClusterTapListener {
   private val clusterTapListener = WeakReference<ClusterTapListener>(this)
   private val collection = map.mapObjects.addClusterizedPlacemarkCollection(WeakReference(this))
-  private val placemarks = HashMap<Long, PlacemarkMapObject>()
+  private val placemarks = MutableLongObjectMap<PlacemarkMapObject>()
 
   fun show(pins: List<MapPin>) {
-    val diff = pinsDiff(placemarks.keys, pins)
+    val diff = pinsDiff(placemarks, pins)
     if (diff.isEmpty) return
     diff.removedIds.forEach { id ->
       placemarks.remove(id)?.let(collection::remove)

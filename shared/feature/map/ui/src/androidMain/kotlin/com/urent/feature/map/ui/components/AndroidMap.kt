@@ -64,6 +64,7 @@ internal actual fun Map(
 
   MapViewportEffect(mapView, onCameraIdle)
   MapPinsEffect(mapView, pins)
+  MapLogoEffect(mapView)
 
   AndroidView(
     modifier = modifier,

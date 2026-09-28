@@ -1,10 +1,10 @@
 package com.urent.feature.map.domain
 
 import com.urent.core.domain.ReactiveModel
+import com.urent.core.domain.mapDistinctNotNullChanges
 import com.urent.feature.map.domain.di.MapScope
 import com.urent.feature.map.domain.entity.MapCity
 import com.urent.feature.map.domain.entity.MapViewport
-import com.urent.feature.map.domain.mapper.accumulated
 import com.urent.feature.map.domain.mapper.settledAreas
 import com.urent.lib.annotation.FlowCoroutineScope
 import kotlinx.coroutines.CoroutineScope
@@ -12,10 +12,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
@@ -26,17 +27,21 @@ class MapModel(
   coroutineScope: CoroutineScope,
   mapRepository: MapRepository,
 ) : ReactiveModel(coroutineScope) {
-  private val viewports = MutableStateFlow<MapViewport?>(null)
+  private val stateFlow = MutableStateFlow(State())
 
-  val cities: StateFlow<List<MapCity>> = viewports
-    .filterNotNull()
+  /**
+   * Every city loaded so far: each value only adds cities to the end of the previous one, and a
+   * response with no new cities emits nothing, so the map is not rebuilt each time the camera stops.
+   */
+  val cities: StateFlow<List<MapCity>> = stateFlow
+    .mapDistinctNotNullChanges { it.viewport }
     .settledAreas()
     .flatMapLatest { viewport ->
       flow { emit(mapRepository.cities(viewport)) }
         // The last cities stay on the map; a failed area is requested again once the camera moves away.
         .catch { error -> error.printStackTrace() }
     }
-    .accumulated()
+    .mapNotNull { response -> stateFlow.value.loadedCities.add(response) }
     .stateIn(
       scope = scope,
       started = SharingStarted.WhileSubscribed(5000),
@@ -44,6 +49,11 @@ class MapModel(
     )
 
   fun changeViewport(viewport: MapViewport) {
-    viewports.value = viewport
+    stateFlow.update { it.copy(viewport = viewport) }
   }
 }
+
+private data class State(
+  val viewport: MapViewport? = null,
+  val loadedCities: LoadedCities = LoadedCities()
+)

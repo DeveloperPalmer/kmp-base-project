@@ -5,7 +5,7 @@ import com.urent.feature.map.domain.MapModel
 import com.urent.feature.map.domain.di.MapScope
 import com.urent.feature.map.ui.adapter.MapAdapter
 import com.urent.feature.map.ui.entity.MapAction
-import com.urent.feature.map.ui.mapper.toMapPin
+import com.urent.feature.map.ui.mapper.toMapPins
 import com.urent.lib.annotation.ViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class MapViewModel(
       }
       launch {
         mapModel.cities.collect { cities ->
-          reduce { state.copy(pins = cities.map { city -> city.toMapPin() }) }
+          reduce { state.copy(pins = cities.toMapPins(mapped = state.pins)) }
         }
       }
     }
