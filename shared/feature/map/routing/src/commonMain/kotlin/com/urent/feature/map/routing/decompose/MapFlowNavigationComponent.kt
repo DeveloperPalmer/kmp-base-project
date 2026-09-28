@@ -11,7 +11,7 @@ import com.urent.core.ui.routing.Event
 import com.urent.feature.map.routing.MapFlowComponent
 import com.urent.feature.map.routing.decompose.MapFlowNavigationComponent.Child
 import com.urent.feature.map.routing.decompose.MapFlowNavigationComponent.Config
-import com.urent.feature.map.ui.screen.map.MapViewModel
+import com.urent.feature.map.ui.screen.map.screen.map.MapViewModel
 
 @Stable
 class MapFlowNavigationComponent(
