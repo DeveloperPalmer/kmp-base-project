@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.shadow.DropShadowPainter
 import androidx.compose.ui.graphics.shadow.Shadow
@@ -75,8 +74,9 @@ internal data class PinStyle(
  * so a city that stays inside a cluster costs nothing. The id carries the style, so a theme change
  * never reuses an image drawn with the old colors.
  *
- * Shadows are blurred once per style: a bubble is the round [pill] stretched through its middle
- * column, and a pin also gets the [tailLayer] laid over it.
+ * Shadows are blurred once per style: a bubble's shadow is the round [pillShadow] stretched through
+ * its middle column, and a pin adds the [tailShadow]. The bubble itself is drawn over them as one
+ * outline, so its tail flows out of the pill without a seam.
  */
 @Immutable
 internal class PinImages(
@@ -96,11 +96,14 @@ internal class PinImages(
     val shadowReach = style.shadows.maxOf { shadow ->
       (shadow.radius + shadow.spread).toPx() + max(abs(shadow.offset.x.toPx()), abs(shadow.offset.y.toPx()))
     }
-    ceil(shadowReach + STROKE_WIDTH.toPx())
+    ceil(shadowReach)
   }
   private val pinHeight = with(density) { ceil(PIN_HEIGHT.toPx() + TAIL_HEIGHT.toPx() + 2 * margin).toInt() }
-  private val pill by lazy { drawPill() }
-  private val tailLayer by lazy { drawTailLayer() }
+
+  // A tail hangs from the flat part of the pill's bottom, so a pin is never narrower than that
+  private val tailStretch = with(density) { 2 * ceil(TAIL_START.toPx()).toInt() }
+  private val pillShadow by lazy { drawPillShadow() }
+  private val tailShadow by lazy { drawTailShadow() }
 
   /** Anchors a pin at the tip of its tail: every pin has the same height, so one style fits all. */
   val pinIconStyle: IconStyle = with(density) {
@@ -126,34 +129,48 @@ internal class PinImages(
   private fun drawBubble(text: String, tail: Boolean): ImageBitmap = with(density) {
     val layout = textMeasurer.measure(text = text, style = style.text, maxLines = 1, softWrap = false)
     val height = PIN_HEIGHT.toPx()
-    // An even stretch moves the middle by whole pixels, so the tail layer stays sharp
-    val stretch = 2 * ((layout.size.width + 2 * PADDING.toPx() - height) / 2).roundToInt().coerceAtLeast(0)
+    val strokeWidth = STROKE_WIDTH.toPx()
+    // An even stretch moves the middle by whole pixels, so the tail shadow stays sharp
+    val fitted = 2 * ((layout.size.width + 2 * PADDING.toPx() - height) / 2).roundToInt().coerceAtLeast(0)
+    val stretch = if (tail) max(fitted, tailStretch) else fitted
     val middle = floor(margin + height / 2).toInt()
-    renderBitmap(pill.width + stretch, if (tail) pinHeight else pill.height) {
+    renderBitmap(pillShadow.width + stretch, if (tail) pinHeight else pillShadow.height) {
       drawImage(
-        image = pill,
-        srcSize = IntSize(middle, pill.height),
+        image = pillShadow,
+        srcSize = IntSize(middle, pillShadow.height),
       )
       drawImage(
-        image = pill,
+        image = pillShadow,
         srcOffset = IntOffset(middle, 0),
-        srcSize = IntSize(1, pill.height),
+        srcSize = IntSize(1, pillShadow.height),
         dstOffset = IntOffset(middle, 0),
-        dstSize = IntSize(stretch, pill.height),
+        dstSize = IntSize(stretch, pillShadow.height),
         filterQuality = FilterQuality.None,
       )
       drawImage(
-        image = pill,
+        image = pillShadow,
         srcOffset = IntOffset(middle, 0),
-        srcSize = IntSize(pill.width - middle, pill.height),
+        srcSize = IntSize(pillShadow.width - middle, pillShadow.height),
         dstOffset = IntOffset(middle + stretch, 0),
       )
       if (tail) {
         drawImage(
-          image = tailLayer,
-          topLeft = Offset(stretch / 2f, 0f),
+          image = tailShadow,
+          topLeft = Offset((stretch - tailStretch) / 2f, 0f),
         )
       }
+      val outline = bubbleOutline(
+        bounds = Rect(
+          left = margin + strokeWidth,
+          top = margin + strokeWidth,
+          right = margin + height + stretch - strokeWidth,
+          bottom = margin + height - strokeWidth,
+        ),
+        tail = tail,
+      )
+      // The fill covers the inner half of the stroke, so the stroke lies outside the fill as in the design
+      drawPath(outline, style.stroke, style = Stroke(2 * strokeWidth))
+      drawPath(outline, style.background)
       drawText(
         textLayoutResult = layout,
         color = style.foreground,
@@ -165,7 +182,7 @@ internal class PinImages(
     }
   }
 
-  private fun drawPill(): ImageBitmap = with(density) {
+  private fun drawPillShadow(): ImageBitmap = with(density) {
     val height = PIN_HEIGHT.toPx()
     val body = Size(height, height)
     val outline = Path().apply { addOval(Rect(Offset.Zero, body)) }
@@ -173,36 +190,69 @@ internal class PinImages(
     renderBitmap(side, side) {
       translate(margin, margin) {
         drawShadows(outline, body)
-        drawPath(outline, style.background)
-        drawPath(outline, style.stroke, style = Stroke(STROKE_WIDTH.toPx()))
       }
     }
   }
 
   /**
-   * The tail where it hangs under the round pill. The layer covers the pill, so it keeps only the
-   * part of the tail's shadow below the pill's stroke, and the tail's fill hides that stroke where
-   * the two join.
+   * The shadow of the tail below the pill's bottom, laid out as for the narrowest pin. Pill and tail
+   * don't overlap there, so their shadows add up to the shadow of the whole bubble.
    */
-  private fun drawTailLayer(): ImageBitmap = with(density) {
-    val strokeWidth = STROKE_WIDTH.toPx()
-    val tailWidth = TAIL_WIDTH.toPx()
-    val tailHeight = TAIL_HEIGHT.toPx()
-    val center = margin + PIN_HEIGHT.toPx() / 2
-    val edge = margin + PIN_HEIGHT.toPx()
-    // The tail starts a bit inside the pill, so its fill leaves no seam between them
-    val tail = triangle(Rect(center - tailWidth / 2, edge - strokeWidth, center + tailWidth / 2, edge + tailHeight))
-    val below = Size(tailWidth * tailHeight / (tailHeight + strokeWidth), tailHeight)
-    renderBitmap(pill.width, pinHeight) {
-      clipRect(top = edge + strokeWidth / 2) {
-        translate(center - below.width / 2, edge) {
-          drawShadows(triangle(Rect(Offset.Zero, below)), below)
-        }
+  private fun drawTailShadow(): ImageBitmap = with(density) {
+    val height = PIN_HEIGHT.toPx()
+    val start = TAIL_START.toPx()
+    val tail = Size(2 * start, TAIL_HEIGHT.toPx())
+    renderBitmap(pillShadow.width + tailStretch, pinHeight) {
+      translate(margin + (height + tailStretch) / 2 - start, margin + height) {
+        drawShadows(shadowTailOutline(tail), tail)
       }
-      drawPath(tail, style.background)
-      clipRect(top = edge - strokeWidth / 2) {
-        drawPath(tail, style.stroke, style = Stroke(strokeWidth))
+    }
+  }
+
+  /** Pill of [bounds] with the tail hanging from the middle of its bottom when [tail] is set. */
+  private fun bubbleOutline(bounds: Rect, tail: Boolean): Path = with(density) {
+    val radius = bounds.height / 2
+    val center = bounds.center.x
+    Path().apply {
+      moveTo(bounds.left + radius, bounds.top)
+      lineTo(bounds.right - radius, bounds.top)
+      arcTo(
+        rect = Rect(bounds.right - 2 * radius, bounds.top, bounds.right, bounds.bottom),
+        startAngleDegrees = -90f,
+        sweepAngleDegrees = 180f,
+        forceMoveTo = false,
+      )
+      if (tail) {
+        val start = TAIL_START.toPx()
+        val startHandle = TAIL_START_HANDLE.toPx()
+        val tipHandle = TAIL_TIP_HANDLE.toPx()
+        val tip = bounds.bottom + TAIL_HEIGHT.toPx()
+        lineTo(center + start, bounds.bottom)
+        cubicTo(center + startHandle, bounds.bottom, center + tipHandle, tip, center, tip)
+        cubicTo(center - tipHandle, tip, center - startHandle, bounds.bottom, center - start, bounds.bottom)
       }
+      lineTo(bounds.left + radius, bounds.bottom)
+      arcTo(
+        rect = Rect(bounds.left, bounds.top, bounds.left + 2 * radius, bounds.bottom),
+        startAngleDegrees = 90f,
+        sweepAngleDegrees = 180f,
+        forceMoveTo = false,
+      )
+      close()
+    }
+  }
+
+  /** The tail of the outline widened by the stroke, the part that casts a shadow below the pill. */
+  private fun shadowTailOutline(size: Size): Path = with(density) {
+    val center = size.width / 2
+    val startHandle = SHADOW_TAIL_START_HANDLE.toPx()
+    val tipHandle = SHADOW_TAIL_TIP_HANDLE.toPx()
+    Path().apply {
+      moveTo(0f, 0f)
+      lineTo(size.width, 0f)
+      cubicTo(center + startHandle, 0f, center + tipHandle, size.height, center, size.height)
+      cubicTo(center - tipHandle, size.height, center - startHandle, 0f, 0f, 0f)
+      close()
     }
   }
 
@@ -231,18 +281,18 @@ internal class PinImages(
   }
 }
 
-/** A triangle pointing down from the top side of [bounds] to the middle of its bottom side. */
-private fun triangle(bounds: Rect): Path {
-  return Path().apply {
-    moveTo(bounds.left, bounds.top)
-    lineTo(bounds.right, bounds.top)
-    lineTo(bounds.center.x, bounds.bottom)
-    close()
-  }
-}
-
-private val PIN_HEIGHT = 30.dp
-private val PADDING = 8.dp
-private val TAIL_WIDTH = 10.dp
-private val TAIL_HEIGHT = 5.dp
+// The pill's height and padding include the stroke
+private val PIN_HEIGHT = 32.dp
+private val PADDING = 9.dp
 private val STROKE_WIDTH = 1.dp
+private val TAIL_HEIGHT = 6.dp
+
+// A side of the tail inside the stroke is a cubic that leaves the pill flat at TAIL_START from the
+// middle and reaches the tip flat; the handles are the distances of its control points from the middle
+private val TAIL_START = 6.7.dp
+private val TAIL_START_HANDLE = 0.6.dp
+private val TAIL_TIP_HANDLE = 1.3.dp
+
+// The same tail widened by the stroke; an offset of a cubic is no cubic, so it is fitted on its own
+private val SHADOW_TAIL_START_HANDLE = 0.8.dp
+private val SHADOW_TAIL_TIP_HANDLE = 2.8.dp
