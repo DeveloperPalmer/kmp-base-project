@@ -86,7 +86,7 @@ fun RowScope.BottomBarItem(
       Icon(
         painter = painterResource(icon),
         contentDescription = contentDescription,
-        tint = if (selected) AppTheme.colors.accent.brand else AppTheme.colors.icon.secondary,
+        tint = if (selected) AppTheme.colors.icon.primary else AppTheme.colors.icon.secondary,
       )
     }
   }
