@@ -54,6 +54,7 @@ include(
   ":shared:feature:city-details:ui",
   ":shared:feature:city-details:routing",
   ":shared:feature:map:domain",
+  ":shared:feature:map:data",
   ":shared:feature:map:ui",
   ":shared:feature:map:routing",
   ":shared:lib:annotation",
