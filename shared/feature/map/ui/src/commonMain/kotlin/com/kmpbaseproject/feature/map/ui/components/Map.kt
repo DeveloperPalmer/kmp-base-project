@@ -12,5 +12,6 @@ internal expect fun Map(
   pins: List<MapPin>,
   actions: Flow<MapAction>,
   onCameraIdle: (MapViewport) -> Unit,
+  onPinClick: (Long) -> Unit,
   modifier: Modifier = Modifier,
 )

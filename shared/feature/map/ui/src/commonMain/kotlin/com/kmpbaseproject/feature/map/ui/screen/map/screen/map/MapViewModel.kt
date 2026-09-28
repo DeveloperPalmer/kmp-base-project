@@ -5,7 +5,9 @@ import com.kmpbaseproject.feature.map.domain.MapModel
 import com.kmpbaseproject.feature.map.domain.di.MapScope
 import com.kmpbaseproject.feature.map.ui.adapter.MapAdapter
 import com.kmpbaseproject.feature.map.ui.entity.MapAction
+import com.kmpbaseproject.feature.map.ui.mapper.toCityInfo
 import com.kmpbaseproject.feature.map.ui.mapper.toMapPins
+import com.kmpbaseproject.feature.map.ui.routing.FlowEvent
 import com.kmpbaseproject.lib.annotation.ViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -19,7 +21,7 @@ class MapViewModel(
   private val mapAdapter: MapAdapter,
   private val mapModel: MapModel,
 ) : BaseViewModel<ViewState, ViewIntent, MapAction>() {
-  override val container = viewModelScope.orbitContainer(ViewState(pins = emptyList())) {
+  override val container = viewModelScope.orbitContainer(ViewState()) {
     coroutineScope {
       launch {
         mapAdapter.actions.collect { action ->
@@ -29,6 +31,11 @@ class MapViewModel(
       launch {
         mapModel.cities.collect { cities ->
           reduce { state.copy(pins = cities.toMapPins(mapped = state.pins)) }
+        }
+      }
+      launch {
+        mapModel.selectedCity.collect { city ->
+          reduce { state.copy(city = city?.toCityInfo()) }
         }
       }
     }
@@ -44,6 +51,16 @@ class MapViewModel(
       }
       is ViewIntent.CameraIdle -> {
         mapModel.changeViewport(viewIntent.viewport)
+      }
+      is ViewIntent.SelectCity -> {
+        mapModel.selectCity(viewIntent.cityId)
+      }
+      is ViewIntent.DismissCity -> {
+        mapModel.deselectCity()
+      }
+      is ViewIntent.SearchCityInfo -> {
+        val city = state.city ?: return
+        sendEvent(FlowEvent.CitySearchRequested(city.name))
       }
     }
   }

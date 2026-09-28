@@ -47,6 +47,12 @@ data class AppShadows(
       radius = 6.dp,
       color = Color.Black.copy(alpha = 0.15f)
     )
+  ),
+  val sheet: List<Shadow> = listOf(
+    Shadow(
+      radius = 6.dp,
+      color = Color.Black.copy(alpha = 0.15f)
+    )
   )
 )
 

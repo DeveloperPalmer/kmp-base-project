@@ -14,7 +14,7 @@ internal fun rememberMapSheetState(): MapSheetState {
 
 @Stable
 internal class MapSheetState : MapObstacle {
-  val draggable = AnchoredDraggableState(MapSheetValue.Collapsed)
+  val draggable = AnchoredDraggableState(MapSheetValue.Hidden)
 
   override val top: Float
     get() {

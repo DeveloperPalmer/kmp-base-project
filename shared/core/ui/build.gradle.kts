@@ -14,5 +14,6 @@ dependencies {
   commonMainApi(projects.shared.resources)
   commonMainApi(libs.bundles.orbit)
   commonMainApi(libs.paging.common)
+  commonMainImplementation(libs.essenty.back.handler)
   commonTestImplementation(libs.bundles.unit.test)
 }
