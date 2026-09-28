@@ -10,6 +10,7 @@ kotlin {
 
 dependencies {
   commonMainApi(projects.shared.core.routing)
+  commonMainApi(projects.shared.feature.map.data)
   commonMainApi(projects.shared.feature.map.domain)
   commonMainApi(projects.shared.feature.map.ui)
 }
