@@ -34,15 +34,3 @@ class CityDetailsViewModel(
     }
   }
 }
-
-internal fun formatPopulation(population: Long): String {
-  return population
-    .toString()
-    .reversed()
-    .chunked(DIGIT_GROUP_SIZE)
-    .joinToString(DIGIT_GROUP_SEPARATOR)
-    .reversed()
-}
-
-internal const val DIGIT_GROUP_SIZE = 3
-internal const val DIGIT_GROUP_SEPARATOR = " "
