@@ -28,6 +28,7 @@ internal class MapPinsLayer(
   private val map: Map,
   private val images: PinImages,
 ) : ClusterListener, ClusterTapListener {
+  private val clusterTapListener = WeakReference<ClusterTapListener>(this)
   private val collection = map.mapObjects.addClusterizedPlacemarkCollection(WeakReference(this))
   private val placemarks = HashMap<Long, PlacemarkMapObject>()
 
@@ -50,7 +51,7 @@ internal class MapPinsLayer(
 
   override fun onClusterAdded(cluster: Cluster) {
     cluster.appearance.setIcon(images.cluster(cluster.size))
-    cluster.addClusterTapListener(WeakReference(this))
+    cluster.addClusterTapListener(clusterTapListener)
   }
 
   override fun onClusterTap(cluster: Cluster): Boolean {
