@@ -6,6 +6,7 @@ import com.urent.core.component.AppComponent
 import com.urent.core.component.AppComponentHolder
 import com.urent.core.component.create
 import com.urent.core.component.createBuildConfiguration
+import com.yandex.mapkit.MapKitFactory
 
 class ApplicationDelegate :
   Application(),
@@ -15,6 +16,7 @@ class ApplicationDelegate :
   override fun onCreate() {
     _appComponent = buildAppComponent()
     super.onCreate()
+    initMapKit()
   }
 
   override val appComponent: AppComponent
@@ -29,5 +31,10 @@ class ApplicationDelegate :
       contextDelegate = this,
       buildConfigurationDelegate = buildConfiguration,
     )
+  }
+
+  private fun initMapKit() {
+    MapKitFactory.setApiKey(BuildConfig.YANDEX_API_KEY)
+    MapKitFactory.initialize(this)
   }
 }
