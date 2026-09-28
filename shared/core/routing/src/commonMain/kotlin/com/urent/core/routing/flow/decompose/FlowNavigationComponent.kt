@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.urent.core.routing.di.FlowComponent
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +20,7 @@ import kotlinx.coroutines.launch
 @Stable
 abstract class FlowNavigationComponent<Config : Any, Child : Node>(
   protected val context: ComponentContext,
-) : FlowNode<Config>() {
+) : FlowNode<Config>(), BackHandlerOwner by context {
   abstract val component: FlowComponent
 
   abstract fun initialConfig(): List<Config>

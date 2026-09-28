@@ -3,14 +3,23 @@ package com.urent.feature.map.ui.components
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import com.urent.feature.map.ui.entity.MapPin
 import com.yandex.mapkit.mapview.MapView
 
 @Composable
-internal fun MapPinsEffect(mapView: MapView, pins: List<MapPin>) {
+internal fun MapPinsEffect(
+  mapView: MapView,
+  pins: List<MapPin>,
+  onPinClick: (Long) -> Unit
+) {
   val images = rememberPinImages()
-  val layer = remember(mapView, images) { MapPinsLayer(mapView.mapWindow.map, images) }
+  val currentOnPinClick by rememberUpdatedState(onPinClick)
+  val layer = remember(mapView, images) {
+    MapPinsLayer(mapView.mapWindow.map, images) { id -> currentOnPinClick(id) }
+  }
   DisposableEffect(layer) {
     onDispose { layer.clear() }
   }

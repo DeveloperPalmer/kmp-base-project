@@ -25,6 +25,7 @@ internal actual fun Map(
   pins: List<MapPin>,
   actions: Flow<MapAction>,
   onCameraIdle: (MapViewport) -> Unit,
+  onPinClick: (Long) -> Unit,
   modifier: Modifier,
 ) {
   val context = LocalContext.current
@@ -63,7 +64,7 @@ internal actual fun Map(
   }
 
   MapViewportEffect(mapView, onCameraIdle)
-  MapPinsEffect(mapView, pins)
+  MapPinsEffect(mapView, pins, onPinClick)
   MapLogoEffect(mapView)
 
   AndroidView(

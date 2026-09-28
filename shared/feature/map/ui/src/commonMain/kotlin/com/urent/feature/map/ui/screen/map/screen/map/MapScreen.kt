@@ -7,9 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.layoutId
 import com.urent.core.ui.mvi.MviScreen
+import com.urent.feature.map.ui.components.CitySheetContent
 import com.urent.feature.map.ui.components.Map
+import com.urent.feature.map.ui.components.MapBottomSheet
 import com.urent.feature.map.ui.components.MapControlsLayer
-import com.urent.feature.map.ui.components.MapSheet
 import com.urent.feature.map.ui.components.ZoomControl
 import com.urent.feature.map.ui.components.rememberMapControlsState
 import com.urent.feature.map.ui.components.rememberMapSheetState
@@ -29,6 +30,7 @@ fun MapScreen(viewModel: MapViewModel) {
         modifier = Modifier.fillMaxSize(),
         pins = state.pins,
         actions = sideEffects,
+        onPinClick = { cityId -> onIntent(ViewIntent.SelectCity(cityId)) },
         onCameraIdle = { viewport -> onIntent(ViewIntent.CameraIdle(viewport)) },
       )
       MapControlsLayer(
@@ -42,9 +44,18 @@ fun MapScreen(viewModel: MapViewModel) {
           onZoomOutClick = { onIntent(ViewIntent.ZoomOut) },
         )
       }
-      MapSheet(
-        state = sheetState
-      )
+      MapBottomSheet(
+        state = sheetState,
+        visible = state.city != null,
+        onDismiss = { onIntent(ViewIntent.DismissCity) },
+      ) {
+        state.city?.let { city ->
+          CitySheetContent(
+            city = city,
+            onSearchClick = { onIntent(ViewIntent.SearchCityInfo) },
+          )
+        }
+      }
     }
   }
 }

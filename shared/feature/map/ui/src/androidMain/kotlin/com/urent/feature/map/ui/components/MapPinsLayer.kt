@@ -14,6 +14,8 @@ import com.yandex.mapkit.map.Cluster
 import com.yandex.mapkit.map.ClusterListener
 import com.yandex.mapkit.map.ClusterTapListener
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObject
+import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import java.lang.ref.WeakReference
 
@@ -28,10 +30,17 @@ import java.lang.ref.WeakReference
 internal class MapPinsLayer(
   private val map: Map,
   private val images: PinImages,
-) : ClusterListener, ClusterTapListener {
+  private val onPinClick: (Long) -> Unit,
+) : ClusterListener, ClusterTapListener, MapObjectTapListener {
   private val clusterTapListener = WeakReference<ClusterTapListener>(this)
+  private val pinTapListener = WeakReference<MapObjectTapListener>(this)
   private val collection = map.mapObjects.addClusterizedPlacemarkCollection(WeakReference(this))
   private val placemarks = MutableLongObjectMap<PlacemarkMapObject>()
+
+  init {
+    // A collection hears the taps on all of its placemarks
+    collection.addTapListener(pinTapListener)
+  }
 
   fun show(pins: List<MapPin>) {
     val diff = pinsDiff(placemarks, pins)
@@ -40,7 +49,9 @@ internal class MapPinsLayer(
       placemarks.remove(id)?.let(collection::remove)
     }
     diff.added.forEach { pin ->
-      placemarks[pin.id] = collection.addPlacemark(pin.location.toPoint(), images.pin(pin.title), images.pinIconStyle)
+      val placemark = collection.addPlacemark(pin.location.toPoint(), images.pin(pin.title), images.pinIconStyle)
+      placemark.userData = pin.id
+      placemarks[pin.id] = placemark
     }
     // Placemarks appear only once clustered, and every change of the collection needs clustering again
     collection.clusterPlacemarks(CLUSTER_RADIUS, CLUSTER_MIN_ZOOM)
@@ -67,6 +78,12 @@ internal class MapPinsLayer(
       CameraPosition(fitted.target, fitted.zoom - FIT_MARGIN_ZOOM, fitted.azimuth, fitted.tilt),
       Animation(Animation.Type.SMOOTH, CAMERA_ANIMATION_DURATION),
     )
+    return true
+  }
+
+  override fun onMapObjectTap(mapObject: MapObject, point: Point): Boolean {
+    val id = mapObject.userData as? Long ?: return false
+    onPinClick(id)
     return true
   }
 }
