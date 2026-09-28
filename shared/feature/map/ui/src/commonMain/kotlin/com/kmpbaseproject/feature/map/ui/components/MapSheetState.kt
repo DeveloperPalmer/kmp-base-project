@@ -16,6 +16,9 @@ internal fun rememberMapSheetState(): MapSheetState {
 internal class MapSheetState : MapObstacle {
   val draggable = AnchoredDraggableState(MapSheetValue.Collapsed)
 
-  override val top: Float?
-    get() = draggable.offset.takeUnless(Float::isNaN)
+  override val top: Float
+    get() {
+      val offset = draggable.offset
+      return if (offset.isNaN()) Float.POSITIVE_INFINITY else offset
+    }
 }

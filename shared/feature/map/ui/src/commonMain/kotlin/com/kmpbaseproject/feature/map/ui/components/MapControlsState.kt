@@ -44,10 +44,7 @@ internal class MapControlsState(
   private val heights = mutableStateMapOf<MapControl, Int>()
 
   private val visibility: Map<MapControl, State<Boolean>> = MapControl.entries.associateWith { control ->
-    derivedStateOf {
-      val floor = floor()
-      floor == null || floor - ceiling - heightOf(control) > hideGap
-    }
+    derivedStateOf { floor() - ceiling - heightOf(control) > hideGap }
   }
 
   fun isVisible(control: MapControl): Boolean {
@@ -56,7 +53,7 @@ internal class MapControlsState(
 
   fun topOf(height: Int, viewportHeight: Int): Float {
     val centered = (viewportHeight - height) / 2f
-    val pushed = floor()?.let { it - pushGap - height } ?: centered
+    val pushed = floor() - pushGap - height
     return maxOf(ceiling, minOf(centered, pushed))
   }
 
@@ -71,8 +68,13 @@ internal class MapControlsState(
     return heights[control] ?: 0
   }
 
-  private fun floor(): Float? {
-    return obstacles.mapNotNull { it.top }.minOrNull()
+  // Read on every frame of a drag, so it neither allocates nor boxes
+  private fun floor(): Float {
+    var floor = Float.POSITIVE_INFINITY
+    for (index in obstacles.indices) {
+      floor = minOf(floor, obstacles[index].top)
+    }
+    return floor
   }
 }
 
