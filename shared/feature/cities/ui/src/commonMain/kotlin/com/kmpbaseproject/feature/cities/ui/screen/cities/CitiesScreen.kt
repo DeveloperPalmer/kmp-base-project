@@ -129,7 +129,7 @@ private fun CitiesReady(
               Text(
                 modifier = Modifier.padding(vertical = 4.dp),
                 text = "${city.name}, ${city.country}",
-                style = AppTheme.typography.body1,
+                style = AppTheme.typography.subtitle1,
                 color = AppTheme.colors.text.primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

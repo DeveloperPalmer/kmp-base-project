@@ -18,6 +18,7 @@ import com.kmpbaseproject.resources.city_details_country
 import com.kmpbaseproject.resources.city_details_population
 import com.kmpbaseproject.resources.city_details_population_value
 import com.kmpbaseproject.resources.city_details_search
+import com.kmpbaseproject.resources.city_details_title
 import com.kmpbaseproject.uikit.component.button.PrimaryButton
 import com.kmpbaseproject.uikit.component.info.InfoItem
 import com.kmpbaseproject.uikit.component.topappbar.TopAppBar
@@ -36,6 +37,7 @@ fun CityDetailsScreen(viewModel: CityDetailsViewModel) {
         .safeDrawingPadding()
     ) {
       TopAppBar(
+        title = stringResource(Res.string.city_details_title),
         onBack = { onIntent(ViewIntent.NavigateBack) }
       )
       val city = state.city

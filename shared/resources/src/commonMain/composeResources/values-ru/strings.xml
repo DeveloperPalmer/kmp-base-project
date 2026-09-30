@@ -4,6 +4,7 @@
   <string name="cities_list_title">Список городов</string>
   <string name="cities_screen_title">Города</string>
   <string name="cities_search_placeholder">Введите название города</string>
+  <string name="city_details_title">Информация о городе</string>
   <string name="city_details_city">Город</string>
   <string name="city_details_country">Страна</string>
   <string name="city_details_population">Население</string>
