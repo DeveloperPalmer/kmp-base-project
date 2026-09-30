@@ -6,22 +6,33 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -41,6 +52,7 @@ internal fun TextFieldInternal(
   trailingIcon: DrawableResource,
   trailingIconDescription: String,
   modifier: Modifier = Modifier,
+  keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
   interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
   val focused = interactionSource.collectIsFocusedAsState().value
@@ -60,10 +72,11 @@ internal fun TextFieldInternal(
     focused = focused,
   )
   BasicTextField(
-    modifier = modifier,
+    modifier = modifier.clearFocusOnKeyboardDismiss(),
     value = value,
     onValueChange = onValueChange,
     singleLine = true,
+    keyboardOptions = keyboardOptions,
     textStyle = AppTheme.typography.subtitle1.copy(
       color = textColor.value,
     ),
@@ -156,6 +169,32 @@ internal object TextFieldDefaults {
       focusedTrailingIconColor = AppTheme.colors.icon.primary,
       unfocusedTrailingIconColor = AppTheme.colors.icon.primary,
     )
+  }
+}
+
+fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
+  var isFocused by remember { mutableStateOf(false) }
+  var keyboardAppearedSinceLastFocused by remember { mutableStateOf(false) }
+  val density = LocalDensity.current
+  val ime = WindowInsets.imeTarget
+  val imeIsVisible = remember(ime, density) { derivedStateOf { ime.getBottom(density) > 0 } }.value
+  if (isFocused) {
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(imeIsVisible) {
+      if (imeIsVisible) {
+        keyboardAppearedSinceLastFocused = true
+      } else if (keyboardAppearedSinceLastFocused) {
+        focusManager.clearFocus()
+      }
+    }
+  }
+  onFocusEvent {
+    if (isFocused != it.isFocused) {
+      isFocused = it.isFocused
+      if (isFocused) {
+        keyboardAppearedSinceLastFocused = false
+      }
+    }
   }
 }
 
