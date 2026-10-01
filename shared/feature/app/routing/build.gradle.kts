@@ -10,5 +10,5 @@ kotlin {
 
 dependencies {
   commonMainApi(projects.shared.core.routing)
-  commonMainApi(projects.shared.feature.home.routing)
+  commonMainApi(projects.shared.feature.homeTabs.routing)
 }

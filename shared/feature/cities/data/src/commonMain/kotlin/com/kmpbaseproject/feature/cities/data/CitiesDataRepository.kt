@@ -3,17 +3,21 @@
 package com.kmpbaseproject.feature.cities.data
 
 import androidx.paging.PagingSource
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToOneNotNull
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.kmpbaseproject.core.data.cities.CitiesDatabase
 import com.kmpbaseproject.feature.cities.data.entity.CitiesRequest
 import com.kmpbaseproject.feature.cities.data.entity.CitiesResponse
 import com.kmpbaseproject.feature.cities.domain.CitiesRepository
 import com.kmpbaseproject.feature.cities.domain.entity.City
+import com.kmpbaseproject.feature.cities.domain.entity.CityDetails
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.resources.get
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -93,6 +97,13 @@ class CitiesDataRepository(
         )
       }
     )
+  }
+
+  override fun cityDetails(id: Long): Flow<CityDetails> {
+    return citiesDatabase.cityQueries
+      .getCity(id = id, mapper = ::CityDetails)
+      .asFlow()
+      .mapToOneNotNull(Dispatchers.IO)
   }
 }
 

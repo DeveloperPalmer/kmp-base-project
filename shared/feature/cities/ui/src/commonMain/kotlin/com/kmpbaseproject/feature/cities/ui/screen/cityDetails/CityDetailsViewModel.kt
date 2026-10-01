@@ -1,9 +1,9 @@
-package com.kmpbaseproject.feature.citydetails.ui.screen.cityDetails
+package com.kmpbaseproject.feature.cities.ui.screen.cityDetails
 
+import com.kmpbaseproject.core.domain.di.AppFlowScope
 import com.kmpbaseproject.core.ui.mvi.BaseViewModel
-import com.kmpbaseproject.feature.citydetails.domain.CityDetailsModel
-import com.kmpbaseproject.feature.citydetails.domain.di.CityDetailsScope
-import com.kmpbaseproject.feature.citydetails.ui.routing.FlowEvent
+import com.kmpbaseproject.feature.cities.domain.CitiesModel
+import com.kmpbaseproject.feature.cities.ui.routing.FlowEvent
 import com.kmpbaseproject.lib.annotation.ViewModel
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -11,14 +11,14 @@ import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.syntax.Syntax
 
 @Inject
-@ViewModel(CityDetailsScope::class)
+@ViewModel(AppFlowScope::class)
 class CityDetailsViewModel(
   @Assisted
   cityId: Long,
-  cityDetailsModel: CityDetailsModel,
+  citiesModel: CitiesModel,
 ) : BaseViewModel<ViewState, ViewIntent, Nothing>() {
   override val container = viewModelScope.orbitContainer<ViewState, Nothing>(ViewState()) {
-    cityDetailsModel.city(cityId)
+    citiesModel.cityDetails(cityId)
       .collect { city -> reduce { state.copy(city = city) } }
   }
 

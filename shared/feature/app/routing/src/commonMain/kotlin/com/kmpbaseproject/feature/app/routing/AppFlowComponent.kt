@@ -7,7 +7,7 @@ import com.kmpbaseproject.core.ui.viewmodel.AssistedViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.ViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.emptyAssistedViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.emptyViewModelProvider
-import com.kmpbaseproject.feature.home.routing.HomeFlowComponent
+import com.kmpbaseproject.feature.hometabs.routing.HomeTabsFlowComponent
 import com.kmpbaseproject.lib.annotation.MergeSubcomponent
 import com.kmpbaseproject.lib.annotation.ScopedViewModel
 import me.tatarka.inject.annotations.IntoSet
@@ -16,7 +16,7 @@ import me.tatarka.inject.annotations.Provides
 @Stable
 @MergeSubcomponent(AppFlowScope::class)
 interface AppFlowComponent : FlowComponent {
-  fun homeFlowComponent(): HomeFlowComponent
+  fun homeTabsFlowComponent(): HomeTabsFlowComponent
 
   @Provides
   @IntoSet

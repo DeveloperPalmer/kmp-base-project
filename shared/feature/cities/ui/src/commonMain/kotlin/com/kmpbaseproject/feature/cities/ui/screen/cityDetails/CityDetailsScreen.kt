@@ -1,4 +1,4 @@
-package com.kmpbaseproject.feature.citydetails.ui.screen.cityDetails
+package com.kmpbaseproject.feature.cities.ui.screen.cityDetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kmpbaseproject.core.ui.formatPopulation
 import com.kmpbaseproject.core.ui.mvi.MviScreen
-import com.kmpbaseproject.feature.citydetails.domain.entity.CityDetails
+import com.kmpbaseproject.feature.cities.domain.entity.CityDetails
 import com.kmpbaseproject.resources.Res
 import com.kmpbaseproject.resources.city_details_city
 import com.kmpbaseproject.resources.city_details_country

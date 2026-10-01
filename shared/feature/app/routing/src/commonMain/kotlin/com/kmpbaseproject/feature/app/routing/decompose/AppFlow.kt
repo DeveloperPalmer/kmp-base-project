@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.kmpbaseproject.feature.home.routing.decompose.HomeFlow
+import com.kmpbaseproject.feature.cities.ui.screen.cityDetails.CityDetailsScreen
+import com.kmpbaseproject.feature.hometabs.routing.decompose.HomeTabsFlow
 
 @Composable
 fun AppFlow(component: AppFlowNavigationComponent) {
@@ -14,7 +15,10 @@ fun AppFlow(component: AppFlowNavigationComponent) {
   ) { child ->
     when (val instance = child.instance) {
       is AppFlowNavigationComponent.Child.Home -> {
-        HomeFlow(component = instance.component)
+        HomeTabsFlow(component = instance.component)
+      }
+      is AppFlowNavigationComponent.Child.CityDetails -> {
+        CityDetailsScreen(viewModel = instance.viewModel)
       }
     }
   }

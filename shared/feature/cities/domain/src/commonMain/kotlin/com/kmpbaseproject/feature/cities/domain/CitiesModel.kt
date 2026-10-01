@@ -5,8 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kmpbaseproject.core.domain.ReactiveModel
-import com.kmpbaseproject.feature.cities.domain.di.CitiesScope
+import com.kmpbaseproject.core.domain.di.AppFlowScope
 import com.kmpbaseproject.feature.cities.domain.entity.City
+import com.kmpbaseproject.feature.cities.domain.entity.CityDetails
 import com.kmpbaseproject.feature.cities.domain.mediator.CitiesRemoteMediator
 import com.kmpbaseproject.feature.cities.domain.mediator.PAGE_SIZE
 import com.kmpbaseproject.lib.annotation.FlowCoroutineScope
@@ -20,11 +21,11 @@ import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
-@SingleIn(CitiesScope::class)
+@SingleIn(AppFlowScope::class)
 class CitiesModel(
-  @FlowCoroutineScope(CitiesScope::class)
+  @FlowCoroutineScope(AppFlowScope::class)
   coroutineScope: CoroutineScope,
-  citiesRepository: CitiesRepository,
+  private val citiesRepository: CitiesRepository,
 ) : ReactiveModel(coroutineScope) {
   private val stateFlow = MutableStateFlow(State())
 
@@ -44,6 +45,8 @@ class CitiesModel(
       ).flow
     }
     .cachedIn(scope)
+
+  fun cityDetails(id: Long): Flow<CityDetails> = citiesRepository.cityDetails(id)
 
   fun search(query: String) {
     stateFlow.update { it.copy(citiesSearchQuery = query) }

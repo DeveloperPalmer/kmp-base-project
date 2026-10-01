@@ -1,4 +1,4 @@
-package com.kmpbaseproject.feature.citydetails.domain.entity
+package com.kmpbaseproject.feature.cities.domain.entity
 
 data class CityDetails(
   val name: String,
