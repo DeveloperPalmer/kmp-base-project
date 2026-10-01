@@ -14,11 +14,15 @@ import com.kmpbaseproject.lib.annotation.FlowCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 @Inject
 @SingleIn(AppFlowScope::class)
@@ -31,6 +35,9 @@ class CitiesModel(
 
   val cities: Flow<PagingData<City>> = stateFlow
     .map { it.citiesSearchQuery }
+    // An empty query (first load, cleared search) goes through at once
+    .debounce { query -> if (query.isEmpty()) Duration.ZERO else SEARCH_DEBOUNCE }
+    .distinctUntilChanged()
     .flatMapLatest { query ->
       Pager(
         config = PagingConfig(
@@ -52,6 +59,8 @@ class CitiesModel(
     stateFlow.update { it.copy(citiesSearchQuery = query) }
   }
 }
+
+private val SEARCH_DEBOUNCE = 300.milliseconds
 
 private data class State(
   val citiesSearchQuery: String = ""

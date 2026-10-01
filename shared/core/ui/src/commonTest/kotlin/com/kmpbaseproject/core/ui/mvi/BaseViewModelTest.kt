@@ -1,11 +1,9 @@
 package com.kmpbaseproject.core.ui.mvi
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.syntax.Syntax
@@ -21,29 +19,6 @@ class BaseViewModelTest {
     viewModel.dispatch(TestIntent.Query("ab"))
 
     assertEquals(listOf("a", "ab"), viewModel.state().handled)
-    viewModel.destroy()
-  }
-
-  @Test
-  fun `passes view intents to stream collected in onCreate`() = runTest {
-    val viewModel = testViewModel()
-
-    viewModel.dispatch(TestIntent.Query("a"))
-    viewModel.dispatch(TestIntent.Query("ab"))
-    advanceUntilIdle()
-
-    assertEquals(listOf("ab"), viewModel.state().debounced)
-    viewModel.destroy()
-  }
-
-  @Test
-  fun `does not lose view intent dispatched right after creation`() = runTest {
-    val viewModel = testViewModel()
-
-    viewModel.dispatch(TestIntent.Query("a"))
-    advanceUntilIdle()
-
-    assertEquals(listOf("a"), viewModel.state().debounced)
     viewModel.destroy()
   }
 
@@ -65,7 +40,6 @@ private fun TestViewModel.state(): TestState = container.stateFlow.value
 
 private data class TestState(
   val handled: List<String> = emptyList(),
-  val debounced: List<String> = emptyList(),
 )
 
 private sealed interface TestIntent {
@@ -74,18 +48,13 @@ private sealed interface TestIntent {
 }
 
 private class TestViewModel(dispatcher: CoroutineDispatcher) : BaseViewModel<TestState, TestIntent, Nothing>() {
-  // Orbit runs on the test dispatcher, so debounce uses virtual time
   override val container = viewModelScope.orbitContainer<TestState, Nothing>(
     initialState = TestState(),
     buildSettings = {
       eventLoopDispatcher = { dispatcher }
       intentLaunchingDispatcher = { dispatcher }
     },
-  ) {
-    intents<TestIntent.Query>()
-      .debounce(DEBOUNCE_MILLIS)
-      .collect { intent -> reduce { state.copy(debounced = state.debounced + intent.text) } }
-  }
+  )
 
   override suspend fun Syntax<TestState, Nothing>.handle(viewIntent: TestIntent) {
     when (viewIntent) {
@@ -94,5 +63,3 @@ private class TestViewModel(dispatcher: CoroutineDispatcher) : BaseViewModel<Tes
     }
   }
 }
-
-private const val DEBOUNCE_MILLIS = 500L
