@@ -2,7 +2,6 @@ package com.kmpbaseproject.feature.map.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -11,20 +10,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kmpbaseproject.feature.map.domain.entity.MapViewport
-import com.kmpbaseproject.feature.map.ui.entity.MapAction
 import com.kmpbaseproject.feature.map.ui.entity.MapPin
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 internal actual fun Map(
   pins: List<MapPin>,
   selectedPinId: Long?,
-  actions: Flow<MapAction>,
+  cameraState: MapCameraState,
   onCameraIdle: (MapViewport) -> Unit,
   onPinClick: (Long) -> Unit,
   modifier: Modifier,
@@ -55,13 +52,9 @@ internal actual fun Map(
     }
   }
 
-  LaunchedEffect(actions, mapView) {
-    actions.collect { action ->
-      when (action) {
-        is MapAction.ZoomIn -> mapView.zoomBy(1f)
-        is MapAction.ZoomOut -> mapView.zoomBy(-1f)
-      }
-    }
+  DisposableEffect(cameraState, mapView) {
+    cameraState.zoomBy = { delta -> mapView.zoomBy(delta) }
+    onDispose { cameraState.zoomBy = null }
   }
 
   MapViewportEffect(mapView, onCameraIdle)

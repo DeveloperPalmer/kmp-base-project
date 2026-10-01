@@ -5,7 +5,6 @@ plugins {
 kotlin {
   android {
     namespace = "com.kmpbaseproject.core.ui"
-    withHostTest {}
   }
 }
 
@@ -15,5 +14,4 @@ dependencies {
   commonMainApi(libs.bundles.orbit)
   commonMainApi(libs.paging.common)
   commonMainImplementation(libs.essenty.back.handler)
-  commonTestImplementation(libs.bundles.unit.test)
 }

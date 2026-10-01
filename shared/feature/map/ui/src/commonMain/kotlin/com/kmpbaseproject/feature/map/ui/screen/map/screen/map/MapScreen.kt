@@ -5,62 +5,96 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.layoutId
-import com.kmpbaseproject.core.ui.mvi.MviScreen
 import com.kmpbaseproject.core.ui.safeDrawingHorizontal
+import com.kmpbaseproject.feature.map.domain.entity.MapViewport
 import com.kmpbaseproject.feature.map.ui.components.CitySheetContent
 import com.kmpbaseproject.feature.map.ui.components.Map
 import com.kmpbaseproject.feature.map.ui.components.MapBottomSheet
+import com.kmpbaseproject.feature.map.ui.components.MapCameraState
 import com.kmpbaseproject.feature.map.ui.components.MapControlsLayer
 import com.kmpbaseproject.feature.map.ui.components.ZoomControl
+import com.kmpbaseproject.feature.map.ui.components.rememberMapCameraState
 import com.kmpbaseproject.feature.map.ui.components.rememberMapControlsState
 import com.kmpbaseproject.feature.map.ui.components.rememberMapSheetState
 import com.kmpbaseproject.feature.map.ui.entity.MapControl
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun MapScreen(viewModel: MapViewModel) {
-  return MviScreen(viewModel) { state, onIntent ->
-    val sheetState = rememberMapSheetState()
-    val controlsState = rememberMapControlsState(listOf(sheetState))
-    Box(
+  val state by viewModel.collectAsState()
+  val cameraState = rememberMapCameraState()
+  viewModel.collectSideEffect { sideEffect ->
+    when (sideEffect) {
+      SideEffect.MapAction.ZoomIn -> cameraState.zoomIn()
+      SideEffect.MapAction.ZoomOut -> cameraState.zoomOut()
+    }
+  }
+  MapContent(
+    state = state,
+    cameraState = cameraState,
+    onPinClick = viewModel::selectCity,
+    onCameraIdle = viewModel::changeViewport,
+    onZoomIn = viewModel::zoomIn,
+    onZoomOut = viewModel::zoomOut,
+    onDismissCity = viewModel::dismissCity,
+    onSearchClick = viewModel::searchCityInfo,
+  )
+}
+
+@Composable
+private fun MapContent(
+  state: ViewState,
+  cameraState: MapCameraState,
+  onPinClick: (Long) -> Unit,
+  onCameraIdle: (MapViewport) -> Unit,
+  onZoomIn: () -> Unit,
+  onZoomOut: () -> Unit,
+  onDismissCity: () -> Unit,
+  onSearchClick: () -> Unit,
+) {
+  val sheetState = rememberMapSheetState()
+  val controlsState = rememberMapControlsState(listOf(sheetState))
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+      .clipToBounds(),
+  ) {
+    Map(
+      modifier = Modifier.fillMaxSize(),
+      cameraState = cameraState,
+      pins = state.pins,
+      selectedPinId = state.city?.id,
+      onPinClick = onPinClick,
+      onCameraIdle = onCameraIdle,
+    )
+    MapControlsLayer(
       modifier = Modifier
         .fillMaxSize()
-        .clipToBounds(),
+        .windowInsetsPadding(WindowInsets.safeDrawingHorizontal),
+      state = controlsState,
     ) {
-      Map(
-        modifier = Modifier.fillMaxSize(),
-        pins = state.pins,
-        selectedPinId = state.city?.id,
-        actions = sideEffects,
-        onPinClick = { cityId -> onIntent(ViewIntent.SelectCity(cityId)) },
-        onCameraIdle = { viewport -> onIntent(ViewIntent.CameraIdle(viewport)) },
+      ZoomControl(
+        modifier = Modifier.layoutId(MapControl.Zoom),
+        visible = controlsState.isVisible(MapControl.Zoom),
+        onZoomIn = onZoomIn,
+        onZoomOut = onZoomOut,
       )
-      MapControlsLayer(
-        modifier = Modifier
-          .fillMaxSize()
-          .windowInsetsPadding(WindowInsets.safeDrawingHorizontal),
-        state = controlsState,
-      ) {
-        ZoomControl(
-          modifier = Modifier.layoutId(MapControl.Zoom),
-          visible = controlsState.isVisible(MapControl.Zoom),
-          onZoomInClick = { onIntent(ViewIntent.ZoomIn) },
-          onZoomOutClick = { onIntent(ViewIntent.ZoomOut) },
+    }
+    MapBottomSheet(
+      state = sheetState,
+      visible = state.city != null,
+      onDismiss = onDismissCity,
+    ) {
+      state.city?.let { city ->
+        CitySheetContent(
+          city = city,
+          onSearchClick = onSearchClick,
         )
-      }
-      MapBottomSheet(
-        state = sheetState,
-        visible = state.city != null,
-        onDismiss = { onIntent(ViewIntent.DismissCity) },
-      ) {
-        state.city?.let { city ->
-          CitySheetContent(
-            city = city,
-            onSearchClick = { onIntent(ViewIntent.SearchCityInfo) },
-          )
-        }
       }
     }
   }

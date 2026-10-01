@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kmpbaseproject.core.ui.formatPopulation
-import com.kmpbaseproject.core.ui.mvi.MviScreen
 import com.kmpbaseproject.feature.cities.domain.entity.CityDetails
 import com.kmpbaseproject.resources.Res
 import com.kmpbaseproject.resources.city_details_city
@@ -26,35 +26,48 @@ import com.kmpbaseproject.uikit.theme.AppTheme
 import com.kmpbaseproject.uikit.theme.VSpacer
 import com.kmpbaseproject.uikit.theme.WSpacer
 import org.jetbrains.compose.resources.stringResource
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun CityDetailsScreen(viewModel: CityDetailsViewModel) {
-  MviScreen(viewModel) { state, onIntent ->
-    Column(
-      modifier = Modifier
-        .fillMaxSize()
-        .background(AppTheme.colors.background.primary)
-        .safeDrawingPadding()
-    ) {
-      TopAppBar(
-        title = stringResource(Res.string.city_details_title),
-        onBack = { onIntent(ViewIntent.NavigateBack) }
-      )
-      val city = state.city
-      if (city != null) {
-        CityInfo(city = city)
-      }
-      WSpacer()
-      VSpacer(16.dp)
-      PrimaryButton(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(horizontal = 16.dp),
-        text = stringResource(Res.string.city_details_search),
-        onClick = { onIntent(ViewIntent.SearchCityInfo) }
-      )
-      VSpacer(16.dp)
+  val state by viewModel.collectAsState()
+  CityDetailsContent(
+    state = state,
+    onBack = viewModel::navigateBack,
+    onSearchClick = viewModel::searchCityInfo
+  )
+}
+
+@Composable
+private fun CityDetailsContent(
+  state: ViewState,
+  onBack: () -> Unit,
+  onSearchClick: () -> Unit,
+) {
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(AppTheme.colors.background.primary)
+      .safeDrawingPadding()
+  ) {
+    TopAppBar(
+      title = stringResource(Res.string.city_details_title),
+      onBack = onBack
+    )
+    val city = state.city
+    if (city != null) {
+      CityInfo(city = city)
     }
+    WSpacer()
+    VSpacer(16.dp)
+    PrimaryButton(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp),
+      text = stringResource(Res.string.city_details_search),
+      onClick = onSearchClick
+    )
+    VSpacer(16.dp)
   }
 }
 

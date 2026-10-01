@@ -8,7 +8,6 @@ import com.kmpbaseproject.core.ui.viewmodel.emptyAssistedViewModelProvider
 import com.kmpbaseproject.core.ui.viewmodel.emptyViewModelProvider
 import kotlinx.coroutines.CoroutineScope
 import org.orbitmvi.orbit.orbitContainer
-import org.orbitmvi.orbit.syntax.Syntax
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -80,23 +79,17 @@ private class TestFlowComponent(
   override fun coroutineScope(): CoroutineScope = error("not used by viewModel()")
 }
 
-private class MainViewModel : BaseViewModel<Unit, Nothing, Nothing>() {
+private class MainViewModel : BaseViewModel<Unit, Nothing>() {
   override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-  override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
 }
 
 private class DetailsViewModel(
   val title: String,
   val id: Int,
-) : BaseViewModel<Unit, Nothing, Nothing>() {
+) : BaseViewModel<Unit, Nothing>() {
   override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-  override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
 }
 
-private class UnknownViewModel : BaseViewModel<Unit, Nothing, Nothing>() {
+private class UnknownViewModel : BaseViewModel<Unit, Nothing>() {
   override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-  override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
 }

@@ -15,43 +15,58 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.kmpbaseproject.core.ui.mvi.MviScreen
 import com.kmpbaseproject.core.ui.routing.DecomposeBackPressedHandler
 import com.kmpbaseproject.feature.hometabs.ui.entity.Tab
 import com.kmpbaseproject.uikit.component.bottombar.BottomBar
 import com.kmpbaseproject.uikit.component.bottombar.BottomBarItem
 import org.jetbrains.compose.resources.stringResource
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel, content: @Composable () -> Unit) {
-  MviScreen(viewModel) { state, onIntent ->
-    DecomposeBackPressedHandler(enabled = state.isBackEnabled) {
-      onIntent(ViewIntent.NavigateBack)
+  val state by viewModel.collectAsState()
+  HomeContent(
+    state = state,
+    onSelectTab = viewModel::selectTab,
+    onBack = viewModel::navigateBack,
+    content = content,
+  )
+}
+
+@Composable
+private fun HomeContent(
+  state: ViewState,
+  onSelectTab: (Tab) -> Unit,
+  onBack: () -> Unit,
+  content: @Composable () -> Unit,
+) {
+  DecomposeBackPressedHandler(
+    enabled = state.isBackEnabled,
+    onBack = onBack
+  )
+  val density = LocalDensity.current
+  var bottomBarHeight by remember { mutableStateOf(0.dp) }
+  Column(modifier = Modifier.fillMaxSize()) {
+    Box(
+      modifier = Modifier
+        .fillMaxWidth()
+        .weight(1f)
+        .consumeWindowInsets(PaddingValues(bottom = bottomBarHeight)),
+    ) {
+      content()
     }
-    val density = LocalDensity.current
-    var bottomBarHeight by remember { mutableStateOf(0.dp) }
-    Column(modifier = Modifier.fillMaxSize()) {
-      Box(
-        modifier = Modifier
-          .fillMaxWidth()
-          .weight(1f)
-          .consumeWindowInsets(PaddingValues(bottom = bottomBarHeight)),
-      ) {
-        content()
-      }
-      BottomBar(
-        modifier = Modifier.onSizeChanged { size ->
-          bottomBarHeight = with(density) { size.height.toDp() }
-        },
-      ) {
-        Tab.entries.forEach { tab ->
-          BottomBarItem(
-            selected = tab == state.selectedTab,
-            onClick = { onIntent(ViewIntent.SelectTab(tab)) },
-            icon = tab.icon,
-            contentDescription = stringResource(tab.title),
-          )
-        }
+    BottomBar(
+      modifier = Modifier.onSizeChanged { size ->
+        bottomBarHeight = with(density) { size.height.toDp() }
+      },
+    ) {
+      Tab.entries.forEach { tab ->
+        BottomBarItem(
+          selected = tab == state.selectedTab,
+          onClick = { onSelectTab(tab) },
+          icon = tab.icon,
+          contentDescription = stringResource(tab.title),
+        )
       }
     }
   }

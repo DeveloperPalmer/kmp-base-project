@@ -17,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,7 +29,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.kmpbaseproject.core.ui.entity.ContentLoadState
 import com.kmpbaseproject.core.ui.entity.UiError
-import com.kmpbaseproject.core.ui.mvi.MviScreen
 import com.kmpbaseproject.core.ui.toUiLceState
 import com.kmpbaseproject.feature.cities.domain.entity.City
 import com.kmpbaseproject.resources.Res
@@ -47,27 +47,28 @@ import com.kmpbaseproject.uikit.theme.VSpacer
 import com.kmpbaseproject.uikit.theme.WSpacer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun CitiesScreen(viewModel: CitiesViewModel) {
-  MviScreen(viewModel) { state, onIntent ->
-    val cities = state.cities.collectAsLazyPagingItems()
-    when (val contentLoadState = cities.loadState.refresh.toUiLceState()) {
-      is ContentLoadState.Error -> {
-        CitiesError(
-          error = contentLoadState.error,
-          onRetry = cities::retry
-        )
-      }
-      is ContentLoadState.Loading,
-      is ContentLoadState.Ready -> {
-        CitiesReady(
-          query = state.citiesSearchQuery,
-          cities = cities,
-          isLoading = contentLoadState == ContentLoadState.Loading,
-          onIntent = onIntent
-        )
-      }
+  val state by viewModel.collectAsState()
+  val cities = state.cities.collectAsLazyPagingItems()
+  when (val contentLoadState = cities.loadState.refresh.toUiLceState()) {
+    is ContentLoadState.Error -> {
+      CitiesError(
+        error = contentLoadState.error,
+        onRetry = cities::retry
+      )
+    }
+    is ContentLoadState.Loading,
+    is ContentLoadState.Ready -> {
+      CitiesReady(
+        query = state.citiesSearchQuery,
+        cities = cities,
+        isLoading = contentLoadState == ContentLoadState.Loading,
+        onQueryChange = viewModel::changeQuery,
+        onCityClick = viewModel::openDetails
+      )
     }
   }
 }
@@ -77,7 +78,8 @@ private fun CitiesReady(
   query: String,
   cities: LazyPagingItems<City>,
   isLoading: Boolean,
-  onIntent: (ViewIntent) -> Unit,
+  onQueryChange: (String) -> Unit,
+  onCityClick: (Long) -> Unit,
 ) {
   Column(
     modifier = Modifier
@@ -94,7 +96,7 @@ private fun CitiesReady(
         .fillMaxWidth()
         .padding(horizontal = 16.dp),
       value = query,
-      onValueChange = { onIntent(ViewIntent.QueryChanged(it)) },
+      onValueChange = onQueryChange,
       placeholder = stringResource(Res.string.cities_search_placeholder),
       trailingIcon = Res.drawable.ic_search_24,
       trailingIconDescription = "search icon"
@@ -122,7 +124,7 @@ private fun CitiesReady(
               modifier = Modifier.clickable(
                 indication = null,
                 interactionSource = null,
-                onClick = { onIntent(ViewIntent.OpenDetails(city.id)) }
+                onClick = { onCityClick(city.id) }
               ),
               showDivider = index > 0
             ) {

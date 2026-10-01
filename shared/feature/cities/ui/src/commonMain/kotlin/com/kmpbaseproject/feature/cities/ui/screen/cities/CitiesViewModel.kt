@@ -6,27 +6,25 @@ import com.kmpbaseproject.feature.cities.domain.di.CitiesScope
 import com.kmpbaseproject.feature.cities.ui.routing.FlowEvent
 import com.kmpbaseproject.lib.annotation.ViewModel
 import me.tatarka.inject.annotations.Inject
+import org.orbitmvi.orbit.blockingIntent
 import org.orbitmvi.orbit.orbitContainer
-import org.orbitmvi.orbit.syntax.Syntax
 
 @Inject
 @ViewModel(CitiesScope::class)
 class CitiesViewModel(
   private val citiesModel: CitiesModel,
-) : BaseViewModel<ViewState, ViewIntent, Nothing>() {
+) : BaseViewModel<ViewState, Nothing>() {
   override val container = viewModelScope.orbitContainer<ViewState, Nothing>(
     ViewState(cities = citiesModel.cities)
   )
 
-  override suspend fun Syntax<ViewState, Nothing>.handle(viewIntent: ViewIntent) {
-    when (viewIntent) {
-      is ViewIntent.QueryChanged -> {
-        reduce { state.copy(citiesSearchQuery = viewIntent.query) }
-        citiesModel.search(viewIntent.query)
-      }
-      is ViewIntent.OpenDetails -> {
-        sendEvent(FlowEvent.CityDetailsRequested(viewIntent.cityId))
-      }
-    }
+  // Blocking, so the text field gets its value back before the next keystroke
+  fun changeQuery(query: String) = blockingIntent {
+    reduce { state.copy(citiesSearchQuery = query) }
+    citiesModel.search(query)
+  }
+
+  fun openDetails(cityId: Long) = intent {
+    sendEvent(FlowEvent.CityDetailsRequested(cityId))
   }
 }

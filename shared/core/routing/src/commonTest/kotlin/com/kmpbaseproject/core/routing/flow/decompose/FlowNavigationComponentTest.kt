@@ -19,7 +19,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.orbitmvi.orbit.orbitContainer
-import org.orbitmvi.orbit.syntax.Syntax
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -41,7 +40,7 @@ class FlowNavigationComponentTest {
   fun `navigates to config returned by transition`() {
     val flow = TestFlowNavigationComponent()
 
-    flow.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
+    flow.activeViewModel().send(TestFlowEvent.DetailsRequested)
 
     assertEquals(listOf(TestConfig.Root, TestConfig.Details), flow.configs())
   }
@@ -49,9 +48,9 @@ class FlowNavigationComponentTest {
   @Test
   fun `passes events of pushed screen to transition`() {
     val flow = TestFlowNavigationComponent()
-    flow.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
+    flow.activeViewModel().send(TestFlowEvent.DetailsRequested)
 
-    flow.activeViewModel().dispatch(TestFlowEvent.MoreRequested)
+    flow.activeViewModel().send(TestFlowEvent.MoreRequested)
 
     assertEquals(listOf(TestConfig.Root, TestConfig.Details, TestConfig.More), flow.configs())
   }
@@ -59,11 +58,11 @@ class FlowNavigationComponentTest {
   @Test
   fun `stops passing events of destroyed screen`() {
     val flow = TestFlowNavigationComponent()
-    flow.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
+    flow.activeViewModel().send(TestFlowEvent.DetailsRequested)
     val details = flow.activeViewModel()
     flow.back()
 
-    details.dispatch(TestFlowEvent.DetailsRequested)
+    details.send(TestFlowEvent.DetailsRequested)
 
     assertEquals(listOf(TestConfig.Root), flow.configs())
   }
@@ -71,27 +70,29 @@ class FlowNavigationComponentTest {
   @Test
   fun `navigates back on back transition`() {
     val flow = TestFlowNavigationComponent()
-    flow.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
+    flow.activeViewModel().send(TestFlowEvent.DetailsRequested)
 
-    flow.activeViewModel().dispatch(TestFlowEvent.BackRequested)
+    flow.activeViewModel().send(TestFlowEvent.BackRequested)
 
     assertEquals(listOf(TestConfig.Root), flow.configs())
   }
 
   @Test
-  fun `passes open url up to parent flow`() {
+  fun `keeps event in its flow on stay transition`() {
     val parent = TestParentFlow()
+    val nested = parent.nested()
 
-    parent.nested().activeViewModel().dispatch(TestFlowEvent.LinkRequested)
+    nested.activeViewModel().send(TestFlowEvent.StayRequested)
 
-    assertEquals(listOf(TEST_URL), parent.openedUrls)
+    assertEquals(listOf(TestConfig.Root), nested.configs())
+    assertEquals(listOf(TestParentConfig.Nested), parent.configs())
   }
 
   @Test
   fun `passes ignored event to parent flow`() {
     val parent = TestParentFlow()
 
-    parent.nested().activeViewModel().dispatch(TestFlowEvent.ParentRequested)
+    parent.nested().activeViewModel().send(TestFlowEvent.ParentRequested)
 
     assertEquals(listOf(TestParentConfig.Nested, TestParentConfig.Other), parent.configs())
   }
@@ -101,7 +102,7 @@ class FlowNavigationComponentTest {
     val parent = TestParentFlow()
     val nested = parent.nested()
 
-    nested.activeViewModel().dispatch(TestFlowEvent.DetailsRequested)
+    nested.activeViewModel().send(TestFlowEvent.DetailsRequested)
 
     assertEquals(listOf(TestConfig.Root, TestConfig.Details), nested.configs())
     assertEquals(listOf(TestParentConfig.Nested), parent.configs())
@@ -131,7 +132,7 @@ private class TestFlowNavigationComponent(
       TestFlowEvent.DetailsRequested -> FlowTransition.NavigateTo(TestConfig.Details)
       TestFlowEvent.MoreRequested -> FlowTransition.NavigateTo(TestConfig.More)
       TestFlowEvent.BackRequested -> FlowTransition.Back
-      TestFlowEvent.LinkRequested -> FlowTransition.OpenUrl(TEST_URL)
+      TestFlowEvent.StayRequested -> FlowTransition.Stay
       else -> FlowTransition.Ignore
     }
   }
@@ -148,17 +149,14 @@ private class TestFlowNavigationComponent(
 // Hosts TestFlowNavigationComponent as a nested flow
 private class TestParentFlow : FlowNavigationComponent<TestParentConfig, TestParentChild>(resumedContext()) {
   override val component: FlowComponent = ScopeFlowComponent()
-  val openedUrls = mutableListOf<String>()
-
-  override fun openUrl(url: String) {
-    openedUrls += url
-  }
 
   override fun initialConfig(): List<TestParentConfig> = listOf(TestParentConfig.Nested)
 
   override fun transition(event: Event): FlowTransition<TestParentConfig> {
     return when (event) {
-      TestFlowEvent.ParentRequested -> FlowTransition.NavigateTo(TestParentConfig.Other)
+      TestFlowEvent.ParentRequested,
+      TestFlowEvent.StayRequested,
+      -> FlowTransition.NavigateTo(TestParentConfig.Other)
       else -> FlowTransition.Ignore
     }
   }
@@ -195,8 +193,6 @@ private class ScopeFlowComponent : FlowComponent {
   override fun coroutineScope(): CoroutineScope = scope
 }
 
-private const val TEST_URL = "https://example.com"
-
 private sealed interface TestConfig {
   data object Root : TestConfig
   data object Details : TestConfig
@@ -219,17 +215,19 @@ private sealed interface TestFlowEvent : Event {
   data object DetailsRequested : TestFlowEvent
   data object MoreRequested : TestFlowEvent
   data object BackRequested : TestFlowEvent
-  data object LinkRequested : TestFlowEvent
+  data object StayRequested : TestFlowEvent
   data object ParentRequested : TestFlowEvent
 }
 
-// Sends every intent to its flow as is
-private class TestViewModel : BaseViewModel<Unit, Event, Nothing>() {
-  // Runs intents in place, so an event reaches the flow before dispatch returns
+// Sends every event to its flow as is
+private class TestViewModel : BaseViewModel<Unit, Nothing>() {
+  // Runs intents in place, so an event reaches the flow before send returns
   override val container = viewModelScope.orbitContainer<Unit, Nothing>(
     initialState = Unit,
     buildSettings = { eventLoopDispatcher = { Dispatchers.Unconfined } },
   )
 
-  override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Event) = sendEvent(viewIntent)
+  fun send(event: Event) {
+    intent { sendEvent(event) }
+  }
 }

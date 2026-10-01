@@ -3,7 +3,7 @@ package com.kmpbaseproject.feature.map.ui.screen.map.screen.map
 import com.kmpbaseproject.core.ui.mvi.BaseViewModel
 import com.kmpbaseproject.feature.map.domain.MapModel
 import com.kmpbaseproject.feature.map.domain.di.MapScope
-import com.kmpbaseproject.feature.map.ui.entity.MapAction
+import com.kmpbaseproject.feature.map.domain.entity.MapViewport
 import com.kmpbaseproject.feature.map.ui.mapper.toCityInfo
 import com.kmpbaseproject.feature.map.ui.mapper.toMapPins
 import com.kmpbaseproject.feature.map.ui.routing.FlowEvent
@@ -12,14 +12,13 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import org.orbitmvi.orbit.orbitContainer
-import org.orbitmvi.orbit.syntax.Syntax
 
 @Inject
 @ViewModel(MapScope::class)
 class MapViewModel(
   private val mapModel: MapModel,
-) : BaseViewModel<ViewState, ViewIntent, MapAction>() {
-  override val container = viewModelScope.orbitContainer<ViewState, MapAction>(ViewState()) {
+) : BaseViewModel<ViewState, SideEffect>() {
+  override val container = viewModelScope.orbitContainer<ViewState, SideEffect>(ViewState()) {
     coroutineScope {
       launch {
         mapModel.cities.collect { cities ->
@@ -34,27 +33,28 @@ class MapViewModel(
     }
   }
 
-  override suspend fun Syntax<ViewState, MapAction>.handle(viewIntent: ViewIntent) {
-    when (viewIntent) {
-      is ViewIntent.ZoomIn -> {
-        postSideEffect(MapAction.ZoomIn)
-      }
-      is ViewIntent.ZoomOut -> {
-        postSideEffect(MapAction.ZoomOut)
-      }
-      is ViewIntent.CameraIdle -> {
-        mapModel.changeViewport(viewIntent.viewport)
-      }
-      is ViewIntent.SelectCity -> {
-        mapModel.selectCity(viewIntent.cityId)
-      }
-      is ViewIntent.DismissCity -> {
-        mapModel.deselectCity()
-      }
-      is ViewIntent.SearchCityInfo -> {
-        val city = state.city ?: return
-        sendEvent(FlowEvent.CitySearchRequested(city.name))
-      }
-    }
+  fun zoomIn() = intent {
+    postSideEffect(SideEffect.MapAction.ZoomIn)
+  }
+
+  fun zoomOut() = intent {
+    postSideEffect(SideEffect.MapAction.ZoomOut)
+  }
+
+  fun changeViewport(viewport: MapViewport) {
+    mapModel.changeViewport(viewport)
+  }
+
+  fun selectCity(cityId: Long) {
+    mapModel.selectCity(cityId)
+  }
+
+  fun dismissCity() {
+    mapModel.deselectCity()
+  }
+
+  fun searchCityInfo() = intent {
+    val city = state.city ?: return@intent
+    sendEvent(FlowEvent.CitySearchRequested(city.name))
   }
 }

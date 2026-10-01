@@ -89,7 +89,6 @@ internal val flowTreeSource = SourceFile.kotlin(
     import me.tatarka.inject.annotations.Assisted
     import me.tatarka.inject.annotations.Inject
     import org.orbitmvi.orbit.orbitContainer
-    import org.orbitmvi.orbit.syntax.Syntax
     import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
     interface AppFlowScope
@@ -120,10 +119,8 @@ internal val flowTreeSource = SourceFile.kotlin(
     @ViewModel(AppFlowScope::class)
     class MainViewModel(
       val repository: AppFlowRepository,
-    ) : BaseViewModel<Unit, Nothing, Nothing>() {
+    ) : BaseViewModel<Unit, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-      override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
     }
 
     @Inject
@@ -132,10 +129,8 @@ internal val flowTreeSource = SourceFile.kotlin(
       @Assisted val title: String,
       val repository: AppFlowRepository,
       @Assisted val id: Int,
-    ) : BaseViewModel<Unit, Nothing, Nothing>() {
+    ) : BaseViewModel<Unit, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-      override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
     }
 
     // NestedFlowScope has plain view models only
@@ -143,10 +138,8 @@ internal val flowTreeSource = SourceFile.kotlin(
     @ViewModel(NestedFlowScope::class)
     class NestedViewModel(
       val repository: AppFlowRepository,
-    ) : BaseViewModel<Unit, Nothing, Nothing>() {
+    ) : BaseViewModel<Unit, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-      override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
     }
 
     // SiblingFlowScope has assisted view models only
@@ -154,10 +147,8 @@ internal val flowTreeSource = SourceFile.kotlin(
     @ViewModel(SiblingFlowScope::class)
     class SiblingViewModel(
       @Assisted val title: String,
-    ) : BaseViewModel<Unit, Nothing, Nothing>() {
+    ) : BaseViewModel<Unit, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-      override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
     }
   """,
 )
@@ -187,14 +178,11 @@ internal val mainViewModelSource = SourceFile.kotlin(
     import com.kmpbaseproject.lib.annotation.ViewModel
     import me.tatarka.inject.annotations.Inject
     import org.orbitmvi.orbit.orbitContainer
-    import org.orbitmvi.orbit.syntax.Syntax
 
     @Inject
     @ViewModel(AppFlowScope::class)
-    class MainViewModel : BaseViewModel<Unit, Nothing, Nothing>() {
+    class MainViewModel : BaseViewModel<Unit, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-      override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
     }
   """,
 )
@@ -208,14 +196,11 @@ internal val secondViewModelSource = SourceFile.kotlin(
     import com.kmpbaseproject.lib.annotation.ViewModel
     import me.tatarka.inject.annotations.Inject
     import org.orbitmvi.orbit.orbitContainer
-    import org.orbitmvi.orbit.syntax.Syntax
 
     @Inject
     @ViewModel(AppFlowScope::class)
-    class SecondViewModel : BaseViewModel<Unit, Nothing, Nothing>() {
+    class SecondViewModel : BaseViewModel<Unit, Nothing>() {
       override val container = viewModelScope.orbitContainer<Unit, Nothing>(Unit)
-
-      override suspend fun Syntax<Unit, Nothing>.handle(viewIntent: Nothing) = Unit
     }
   """,
 )

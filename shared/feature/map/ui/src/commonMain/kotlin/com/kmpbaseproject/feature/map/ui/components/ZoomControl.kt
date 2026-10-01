@@ -34,8 +34,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun ZoomControl(
   visible: Boolean,
-  onZoomInClick: () -> Unit,
-  onZoomOutClick: () -> Unit,
+  onZoomIn: () -> Unit,
+  onZoomOut: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   AnimatedVisibility(
@@ -64,7 +64,7 @@ internal fun ZoomControl(
       ZoomButton(
         icon = Res.drawable.ic_plus_24,
         contentDescription = stringResource(Res.string.map_zoom_in),
-        onClick = onZoomInClick,
+        onClick = onZoomIn,
       )
       HorizontalDivider(
         thickness = 2.dp,
@@ -73,7 +73,7 @@ internal fun ZoomControl(
       ZoomButton(
         icon = Res.drawable.ic_minus_24,
         contentDescription = stringResource(Res.string.map_zoom_out),
-        onClick = onZoomOutClick,
+        onClick = onZoomOut,
       )
     }
   }

@@ -3,7 +3,7 @@ package com.kmpbaseproject.core.routing.flow.decompose
 import com.kmpbaseproject.core.routing.di.FlowComponent
 import com.kmpbaseproject.core.ui.mvi.BaseViewModel
 
-inline fun <reified VM : BaseViewModel<*, *, *>> FlowComponent.viewModel(
+inline fun <reified VM : BaseViewModel<*, *>> FlowComponent.viewModel(
   vararg params: Any?,
 ): VM {
   val key = VM::class.qualifiedName.orEmpty()

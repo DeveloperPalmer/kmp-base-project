@@ -5,7 +5,7 @@ import com.kmpbaseproject.core.ui.mvi.BaseViewModel
 interface Node
 
 interface Screen : Node {
-  val viewModel: BaseViewModel<*, *, *>
+  val viewModel: BaseViewModel<*, *>
 }
 
 interface Flow : Node {
