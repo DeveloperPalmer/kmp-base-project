@@ -4,4 +4,7 @@ data class City(
   val id: Long,
   val name: String,
   val country: String,
-)
+) {
+  val title: String
+    get() = "$name, $country"
+}

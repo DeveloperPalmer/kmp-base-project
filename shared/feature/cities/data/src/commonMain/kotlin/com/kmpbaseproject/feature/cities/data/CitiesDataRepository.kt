@@ -83,7 +83,18 @@ class CitiesDataRepository(
     }
   }
 
-  override fun cities(query: String): PagingSource<Int, City> {
+  override suspend fun cities(query: String): List<City> {
+    return withContext(Dispatchers.IO) {
+      citiesDatabase.citySearchResultQueries
+        .getAllCities(
+          searchQuery = query,
+          mapper = ::City
+        )
+        .executeAsList()
+    }
+  }
+
+  override fun citiesPagingSource(query: String): PagingSource<Int, City> {
     return QueryPagingSource(
       context = Dispatchers.IO,
       transacter = citiesDatabase.citySearchResultQueries,
@@ -101,7 +112,10 @@ class CitiesDataRepository(
 
   override fun cityDetails(id: Long): Flow<CityDetails> {
     return citiesDatabase.cityQueries
-      .getCity(id = id, mapper = ::CityDetails)
+      .getCity(
+        id = id,
+        mapper = ::CityDetails
+      )
       .asFlow()
       .mapToOneNotNull(Dispatchers.IO)
   }

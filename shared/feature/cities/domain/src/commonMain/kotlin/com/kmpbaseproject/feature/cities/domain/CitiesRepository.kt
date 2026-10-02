@@ -10,6 +10,8 @@ interface CitiesRepository {
 
   suspend fun nextPage(query: String): Int?
 
-  fun cities(query: String): PagingSource<Int, City>
+  fun citiesPagingSource(query: String): PagingSource<Int, City>
+  suspend fun cities(query: String): List<City>
+
   fun cityDetails(id: Long): Flow<CityDetails>
 }
