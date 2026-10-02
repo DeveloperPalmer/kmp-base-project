@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kmpbaseproject.core.domain.ReactiveModel
 import com.kmpbaseproject.core.domain.di.AppFlowScope
-import com.kmpbaseproject.core.domain.storage.DownloadsStorage
 import com.kmpbaseproject.feature.cities.domain.entity.City
 import com.kmpbaseproject.feature.cities.domain.entity.CityDetails
 import com.kmpbaseproject.feature.cities.domain.mediator.CitiesRemoteMediator
@@ -31,7 +30,6 @@ class CitiesModel(
   @FlowCoroutineScope(AppFlowScope::class)
   coroutineScope: CoroutineScope,
   private val citiesRepository: CitiesRepository,
-  private val downloadsStorage: DownloadsStorage,
 ) : ReactiveModel(coroutineScope) {
   private val stateFlow = MutableStateFlow(State())
 
@@ -61,25 +59,9 @@ class CitiesModel(
     stateFlow.update { it.copy(citiesSearchQuery = query) }
   }
 
-  suspend fun export(query: String) {
-    val markdown = citiesRepository.cities(query)
-      .mapIndexed { index, city -> "${index + 1}. ${city.title}" }
-      .joinToString(
-        separator = "\n",
-        postfix = "\n"
-      )
-    downloadsStorage.save(
-      fileName = FILE_NAME,
-      mimeType = MIME_TYPE,
-      content = markdown
-    )
-  }
-
   private data class State(
     val citiesSearchQuery: String = ""
   )
 }
 
 private val SEARCH_DEBOUNCE = 300.milliseconds
-private const val FILE_NAME = "cities.md"
-private const val MIME_TYPE = "text/markdown"

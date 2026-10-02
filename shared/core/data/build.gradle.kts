@@ -20,6 +20,7 @@ kotlin {
 
   sourceSets {
     androidMain.dependencies {
+      api(libs.androidx.work.runtime)
       implementation(libs.ktor.okhttp)
       implementation(libs.sqldelight.android.driver)
     }
