@@ -55,7 +55,9 @@ class CitiesExportWorker @Inject constructor(
     return Result.success()
   }
 
-  override suspend fun getForegroundInfo(): ForegroundInfo = foregroundInfo(progress = 0f)
+  override suspend fun getForegroundInfo(): ForegroundInfo {
+    return foregroundInfo(progress = 0f)
+  }
 
   private suspend fun foregroundInfo(progress: Float): ForegroundInfo {
     val channel = NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
@@ -66,7 +68,9 @@ class CitiesExportWorker @Inject constructor(
       .from(applicationContext)
       .createNotificationChannel(channel)
     // Cancels this work: the coroutine is cancelled and the file is never written
-    val cancelIntent = WorkManager.getInstance(applicationContext).createCancelPendingIntent(id)
+    val cancelIntent = WorkManager
+      .getInstance(applicationContext)
+      .createCancelPendingIntent(id)
     val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
       .setSmallIcon(R.drawable.stat_sys_download)
       .setContentTitle(getString(Res.string.cities_export_notification_title))
