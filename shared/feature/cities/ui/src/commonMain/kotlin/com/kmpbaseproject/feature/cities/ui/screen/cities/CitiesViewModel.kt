@@ -36,7 +36,7 @@ class CitiesViewModel(
   fun onMenuAction(action: MenuAction) = intent {
     when (action) {
       MenuAction.Service -> Unit
-      MenuAction.WorkManager -> Unit
+      MenuAction.WorkManager -> citiesModel.exportWithWorkManager()
     }
   }
 }

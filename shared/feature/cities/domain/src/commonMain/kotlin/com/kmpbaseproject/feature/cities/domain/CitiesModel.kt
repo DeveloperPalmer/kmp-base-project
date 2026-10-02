@@ -8,6 +8,7 @@ import com.kmpbaseproject.core.domain.ReactiveModel
 import com.kmpbaseproject.core.domain.di.AppFlowScope
 import com.kmpbaseproject.feature.cities.domain.entity.City
 import com.kmpbaseproject.feature.cities.domain.entity.CityDetails
+import com.kmpbaseproject.feature.cities.domain.export.CitiesExportScheduler
 import com.kmpbaseproject.feature.cities.domain.mediator.CitiesRemoteMediator
 import com.kmpbaseproject.feature.cities.domain.mediator.PAGE_SIZE
 import com.kmpbaseproject.lib.annotation.FlowCoroutineScope
@@ -30,6 +31,7 @@ class CitiesModel(
   @FlowCoroutineScope(AppFlowScope::class)
   coroutineScope: CoroutineScope,
   private val citiesRepository: CitiesRepository,
+  private val citiesExportScheduler: CitiesExportScheduler,
 ) : ReactiveModel(coroutineScope) {
   private val stateFlow = MutableStateFlow(State())
 
@@ -57,6 +59,10 @@ class CitiesModel(
 
   fun search(query: String) {
     stateFlow.update { it.copy(citiesSearchQuery = query) }
+  }
+
+  fun exportWithWorkManager() {
+    citiesExportScheduler.schedule(stateFlow.value.citiesSearchQuery)
   }
 
   private data class State(
