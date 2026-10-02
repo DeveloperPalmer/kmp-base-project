@@ -1,8 +1,8 @@
 package com.kmpbaseproject.sample
 
 import android.app.Application
+import androidx.work.Configuration
 import com.kmpbaseproject.core.component.AndroidAppComponent
-import com.kmpbaseproject.core.component.AppComponent
 import com.kmpbaseproject.core.component.AppComponentHolder
 import com.kmpbaseproject.core.component.create
 import com.kmpbaseproject.core.component.createBuildConfiguration
@@ -10,8 +10,9 @@ import com.yandex.mapkit.MapKitFactory
 
 class ApplicationDelegate :
   Application(),
-  AppComponentHolder {
-  private var _appComponent: AppComponent? = null
+  AppComponentHolder,
+  Configuration.Provider {
+  private var _appComponent: AndroidAppComponent? = null
 
   override fun onCreate() {
     _appComponent = buildAppComponent()
@@ -19,10 +20,16 @@ class ApplicationDelegate :
     initMapKit()
   }
 
-  override val appComponent: AppComponent
+  override val appComponent: AndroidAppComponent
     get() = _appComponent ?: error("app component no provided")
 
-  private fun buildAppComponent(): AppComponent {
+  // WorkManager is initialized on demand, the default initializer is removed in the manifest
+  override val workManagerConfiguration: Configuration
+    get() = Configuration.Builder()
+      .setWorkerFactory(appComponent.workerFactory)
+      .build()
+
+  private fun buildAppComponent(): AndroidAppComponent {
     val buildConfiguration = createBuildConfiguration(
       buildType = BuildConfig.BUILD_TYPE,
       versionName = BuildConfig.VERSION_NAME,

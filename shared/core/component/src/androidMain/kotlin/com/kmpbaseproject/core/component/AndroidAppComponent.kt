@@ -1,6 +1,7 @@
 package com.kmpbaseproject.core.component
 
 import android.content.Context
+import androidx.work.WorkerFactory
 import com.kmpbaseproject.core.domain.ApplicationContext
 import com.kmpbaseproject.core.domain.configuration.BuildConfiguration
 import me.tatarka.inject.annotations.Provides
@@ -17,5 +18,7 @@ abstract class AndroidAppComponent(
   @get:Provides
   val buildConfiguration: BuildConfiguration,
 ) : AppComponent {
+  abstract val workerFactory: WorkerFactory
+
   abstract fun foregroundComponentFactory(): AndroidForegroundComponent.Factory
 }
