@@ -1,5 +1,6 @@
 package com.kmpbaseproject.uikit.component.topappbar
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
@@ -20,6 +21,7 @@ fun TopAppBar(
   modifier: Modifier = Modifier,
   title: String? = null,
   onBack: (() -> Unit)? = null,
+  actions: @Composable RowScope.() -> Unit = {},
 ) {
   CenterAlignedTopAppBar(
     modifier = modifier,
@@ -41,12 +43,14 @@ fun TopAppBar(
         }
       }
     },
+    actions = actions,
     expandedHeight = 52.dp,
     windowInsets = WindowInsets(0),
     colors = TopAppBarDefaults.topAppBarColors(
       containerColor = AppTheme.colors.background.primary,
       titleContentColor = AppTheme.colors.text.primary,
       navigationIconContentColor = AppTheme.colors.icon.primary,
+      actionIconContentColor = AppTheme.colors.icon.primary,
     ),
   )
 }

@@ -4,7 +4,10 @@ import com.kmpbaseproject.core.ui.mvi.BaseViewModel
 import com.kmpbaseproject.feature.cities.domain.CitiesModel
 import com.kmpbaseproject.feature.cities.domain.di.CitiesScope
 import com.kmpbaseproject.feature.cities.ui.routing.FlowEvent
+import com.kmpbaseproject.feature.cities.ui.screen.cities.ViewState.MenuAction
 import com.kmpbaseproject.lib.annotation.ViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import org.orbitmvi.orbit.blockingIntent
 import org.orbitmvi.orbit.orbitContainer
@@ -14,9 +17,11 @@ import org.orbitmvi.orbit.orbitContainer
 class CitiesViewModel(
   private val citiesModel: CitiesModel,
 ) : BaseViewModel<ViewState, Nothing>() {
-  override val container = viewModelScope.orbitContainer<ViewState, Nothing>(
-    ViewState(cities = citiesModel.cities)
-  )
+  override val container = viewModelScope.orbitContainer<ViewState, Nothing>(ViewState()) {
+    coroutineScope {
+      launch { reduce { state.copy(cities = citiesModel.cities) } }
+    }
+  }
 
   // Blocking, so the text field gets its value back before the next keystroke
   fun changeQuery(query: String) = blockingIntent {
@@ -26,5 +31,12 @@ class CitiesViewModel(
 
   fun openDetails(cityId: Long) = intent {
     sendEvent(FlowEvent.CityDetailsRequested(cityId))
+  }
+
+  fun onMenuAction(action: MenuAction) = intent {
+    when (action) {
+      MenuAction.Service -> Unit
+      MenuAction.WorkManager -> Unit
+    }
   }
 }

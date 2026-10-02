@@ -3,6 +3,7 @@ package com.kmpbaseproject.feature.cities.ui.screen.cities
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,11 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,9 +39,11 @@ import com.kmpbaseproject.core.ui.entity.ContentLoadState
 import com.kmpbaseproject.core.ui.entity.UiError
 import com.kmpbaseproject.core.ui.toUiLceState
 import com.kmpbaseproject.feature.cities.domain.entity.City
+import com.kmpbaseproject.feature.cities.ui.screen.cities.ViewState.MenuAction
 import com.kmpbaseproject.resources.Res
 import com.kmpbaseproject.resources.cities_list_title
 import com.kmpbaseproject.resources.cities_search_placeholder
+import com.kmpbaseproject.resources.ic_more_vert_24
 import com.kmpbaseproject.resources.ic_pin_24
 import com.kmpbaseproject.resources.ic_search_24
 import com.kmpbaseproject.resources.retry
@@ -66,8 +76,10 @@ fun CitiesScreen(viewModel: CitiesViewModel) {
         query = state.citiesSearchQuery,
         cities = cities,
         isLoading = contentLoadState == ContentLoadState.Loading,
+        menuActions = state.menuActions,
         onQueryChange = viewModel::changeQuery,
-        onCityClick = viewModel::openDetails
+        onCityClick = viewModel::openDetails,
+        onMenuAction = viewModel::onMenuAction,
       )
     }
   }
@@ -78,8 +90,10 @@ private fun CitiesReady(
   query: String,
   cities: LazyPagingItems<City>,
   isLoading: Boolean,
+  menuActions: List<MenuAction>,
   onQueryChange: (String) -> Unit,
   onCityClick: (Long) -> Unit,
+  onMenuAction: (MenuAction) -> Unit
 ) {
   Column(
     modifier = Modifier
@@ -88,7 +102,13 @@ private fun CitiesReady(
       .safeDrawingPadding()
   ) {
     TopAppBar(
-      title = stringResource(Res.string.cities_list_title)
+      title = stringResource(Res.string.cities_list_title),
+      actions = {
+        OverflowMenu(
+          items = menuActions,
+          onItemClick = onMenuAction
+        )
+      }
     )
     VSpacer(8.dp)
     PrimaryTextField(
@@ -221,6 +241,46 @@ private fun CitiesError(
       onClick = onRetry
     )
     VSpacer(16.dp)
+  }
+}
+
+@Composable
+private fun OverflowMenu(
+  items: List<MenuAction>,
+  onItemClick: (MenuAction) -> Unit
+) {
+  var expanded by remember { mutableStateOf(false) }
+  Box {
+    IconButton(onClick = { expanded = true }) {
+      Icon(
+        painter = painterResource(Res.drawable.ic_more_vert_24),
+        contentDescription = "more icon",
+      )
+    }
+    DropdownMenu(
+      expanded = expanded,
+      onDismissRequest = { expanded = false },
+      shape = AppTheme.shapes.small,
+      containerColor = AppTheme.colors.background.primary,
+    ) {
+      items.forEach { item ->
+        DropdownMenuItem(
+          text = {
+            Text(
+              text = stringResource(item.title),
+              style = AppTheme.typography.body1,
+            )
+          },
+          onClick = {
+            expanded = false
+            onItemClick(item)
+          },
+          colors = MenuDefaults.itemColors(
+            textColor = AppTheme.colors.text.primary,
+          ),
+        )
+      }
+    }
   }
 }
 

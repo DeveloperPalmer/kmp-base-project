@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">KmpBaseProject</string>
+  <string name="cities_download_with_service">Загрузить через Service</string>
+  <string name="cities_download_with_work_manager">Загрузить через WorkManager</string>
   <string name="cities_list_title">Список городов</string>
   <string name="cities_screen_title">Города</string>
   <string name="cities_search_placeholder">Введите название города</string>
