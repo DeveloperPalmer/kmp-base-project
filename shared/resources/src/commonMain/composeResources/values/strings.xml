@@ -3,6 +3,9 @@
   <string name="app_name">KmpBaseProject</string>
   <string name="cities_download_with_service">Download with Service</string>
   <string name="cities_download_with_work_manager">Download with WorkManager</string>
+  <string name="cities_export_cancel">Cancel</string>
+  <string name="cities_export_channel_name">Cities export</string>
+  <string name="cities_export_notification_title">Exporting cities</string>
   <string name="cities_list_title">City list</string>
   <string name="cities_screen_title">Cities</string>
   <string name="cities_search_placeholder">Enter city name</string>

@@ -7,6 +7,12 @@ kotlin {
   android {
     namespace = "com.kmpbaseproject.feature.cities.data"
   }
+
+  sourceSets {
+    androidMain.dependencies {
+      implementation(projects.shared.resources)
+    }
+  }
 }
 
 dependencies {
