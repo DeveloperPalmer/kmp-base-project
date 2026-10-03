@@ -17,6 +17,7 @@ import com.kmpbaseproject.resources.Res
 import com.kmpbaseproject.resources.cities_export_cancel
 import com.kmpbaseproject.resources.cities_export_channel_name
 import com.kmpbaseproject.resources.cities_export_notification_title
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -34,13 +35,15 @@ class CitiesExportWorker @Inject constructor(
 ) : CoroutineWorker(context, params) {
   override suspend fun doWork(): Result {
     val query = inputData.getString(KEY_QUERY) ?: return Result.failure()
-    setForeground(getForegroundInfo())
+    val isForeground = tryStartForeground()
     val cities = citiesRepository.cities(query)
     val markdown = cities
       .mapIndexed { index, city ->
         delay(500.milliseconds)
         // Same notification id, so the foreground notification is updated in place
-        setForeground(foregroundInfo(progress = (index + 1f) / cities.size))
+        if (isForeground) {
+          setForeground(foregroundInfo(progress = (index + 1f) / cities.size))
+        }
         "${index + 1}. ${city.title}"
       }
       .joinToString(
@@ -53,6 +56,20 @@ class CitiesExportWorker @Inject constructor(
       content = markdown
     )
     return Result.success()
+  }
+
+  // Since S a foreground service can't start from the background, which is where periodic runs
+  // usually happen; such a run continues as regular work without the notification
+  private suspend fun tryStartForeground(): Boolean {
+    return try {
+      setForeground(getForegroundInfo())
+      true
+    } catch (e: CancellationException) {
+      // CancellationException is an IllegalStateException, so it has to be let through first
+      throw e
+    } catch (_: IllegalStateException) {
+      false
+    }
   }
 
   override suspend fun getForegroundInfo(): ForegroundInfo {

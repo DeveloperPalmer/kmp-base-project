@@ -62,7 +62,7 @@ class CitiesModel(
   }
 
   fun exportWithWorkManager() {
-    citiesExportScheduler.schedule(stateFlow.value.citiesSearchQuery)
+    citiesExportScheduler.scheduleOneTime(stateFlow.value.citiesSearchQuery)
   }
 
   private data class State(
